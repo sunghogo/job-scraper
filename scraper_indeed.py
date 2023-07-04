@@ -1,4 +1,5 @@
 import selenium
+from selenium.webdriver.common.by import By
 from typing import Dict
 from bs4 import BeautifulSoup
 import time
@@ -30,15 +31,14 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
     initial_html = driver.page_source
     initial_soup = BeautifulSoup(initial_html, 'html.parser')
     jobs = initial_soup.find_all('table', class_='jobCard_mainContent')
+    jobs_el = driver.find_elements(By.CLASS_NAME, "jobCard_mainContent")
     
     # Extract data
-    for job in jobs:
+    for i, job in enumerate(jobs):
         job_id = job.find('a').get('data-jk', None)
         # link = job.find('a').get('href', None)
-        new_url = url + f"vjk={job_id}"
-        print(new_url)
-        driver.get(new_url)
-        time.sleep(3 + random.random())
+        jobs_el[i].click()
+        time.sleep(5 + random.random())
         driver.save_screenshot(f"screenshots/{job_id}.png")
         
         html = driver.page_source
