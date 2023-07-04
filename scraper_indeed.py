@@ -1,9 +1,12 @@
 import selenium
 from typing import Dict
 from bs4 import BeautifulSoup
+import time
+import random
+import json
 
 def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, position: str, location: str, options: Dict[str, str] = None):
-    jobs = []
+    jobs_list = []
     
     base_url = 'https://www.indeed.com'
     url = f"{base_url}/jobs?q={position.replace(' ', '+')}&l={location.replace(' ', '+')}"
@@ -19,28 +22,41 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
                 url += f"&start={value}"
 
     driver.get(url)
-    driver.save_screenshot('get-website-screencap.png')
+    total_page_height = driver.execute_script("return document.body.parentNode.scrollHeight")
+    driver.set_window_size(1200, total_page_height)
+    driver.save_screenshot('screenshots/get-website-screencap.png')
 
     # Fetch HTML
-    html = driver.page_source
-    soup = BeautifulSoup(html, 'html.parser')
-    
-    job_els = soup.find_all('table', class_='jobCard_mainContent')
+    initial_html = driver.page_source
+    initial_soup = BeautifulSoup(initial_html, 'html.parser')
+    jobs = initial_soup.find_all('table', class_='jobCard_mainContent')
     
     # Extract data
-    for job in job_els:
+    for job in jobs:
         job_id = job.find('a').get('data-jk', None)
         # link = job.find('a').get('href', None)
+        new_url = url + f"vjk={job_id}"
+        print(new_url)
+        driver.get(new_url)
+        time.sleep(3 + random.random())
+        driver.save_screenshot(f"screenshots/{job_id}.png")
+        
+        html = driver.page_source
+        soup = BeautifulSoup(html, 'html.parser')
+        
         position = job.find('h2', class_='jobTitle').get_text()
         company = job.find('span', class_='companyName').get_text()
         location = job.find('div', class_='companyLocation').get_text()
-        metadata = job.find('div', class_='metadataContainer')
-        salary = metadata.find('div', class_='salary-snippet-container')
+        
+        # metadata = job.find('div', class_='metadataContainer')
+        salary = job.find('div', class_='salary-snippet-container')
         if salary != None:
             salary = salary.get_text()
-        estimated_salary = metadata.find('div', class_='estimated-salary-container')
+        estimated_salary = job.find('div', class_='estimated-salary-container')
         if estimated_salary != None:
             estimated_salary = estimated_salary.get_text()
+            
+        job_details = soup.find('div', class_='jobsearch-JobComponent-description').get_text(separator='\n', strip=True)
        
         job_dict = {
             'job_id': job_id,       
@@ -49,12 +65,20 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
             'location': location,
             'salary': salary,
             'estimated_salary': estimated_salary,
-            'link': f"{base_url}/viewjob?jk={job_id}"
+            'link': f"{base_url}/viewjob?jk={job_id}",
+            'job_details': job_details
         }
-        jobs.append(job_dict)
-        
-    print(jobs)
+        jobs_list.append(job_dict)
+    # Job Type
+    # class="css-fhkva6 eu4oa1w0"
+    # class="css-1oqmop4 eu4oa1w0"
+    print(jobs_list)
 
+    # Write output html
     # # Open the file in write mode
     # with open('output.html', 'w', encoding='utf-8') as file:
     #     file.write(soup.prettify())
+    
+    # Write output json
+    with open('outputs/output.json', 'w') as f:
+        json.dump(jobs_list, f, indent=4)
