@@ -27,16 +27,20 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
     
     job_els = soup.find_all('table', class_='jobCard_mainContent')
     
+    # Extract data
     for job in job_els:
         job_id = job.find('a').get('data-jk', None)
-        link = job.find('a').get('href', None)
+        # link = job.find('a').get('href', None)
         position = job.find('h2', class_='jobTitle').get_text()
         company = job.find('span', class_='companyName').get_text()
         location = job.find('div', class_='companyLocation').get_text()
-        # salary = job.find('div', class_='heading6 tapItem-gutter metadataContainer')
-        salary = job.find('div', class_='salary-snippet-container')
+        metadata = job.find('div', class_='metadataContainer')
+        salary = metadata.find('div', class_='salary-snippet-container')
         if salary != None:
             salary = salary.get_text()
+        estimated_salary = metadata.find('div', class_='estimated-salary-container')
+        if estimated_salary != None:
+            estimated_salary = estimated_salary.get_text()
        
         job_dict = {
             'job_id': job_id,       
@@ -44,6 +48,7 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
             'company': company,
             'location': location,
             'salary': salary,
+            'estimated_salary': estimated_salary,
             'link': f"{base_url}/viewjob?jk={job_id}"
         }
         jobs.append(job_dict)
