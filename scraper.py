@@ -1,7 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import chromedriver_binary
-from bs4 import BeautifulSoup
 from scraper_indeed import scrape_indeed
 
 def init_webdriver():
