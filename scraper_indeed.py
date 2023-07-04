@@ -33,7 +33,8 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
         position = job.find('h2', class_='jobTitle').get_text()
         company = job.find('span', class_='companyName').get_text()
         location = job.find('div', class_='companyLocation').get_text()
-        salary = job.find('div', class_='heading6 tapItem-gutter metadataContainer')
+        # salary = job.find('div', class_='heading6 tapItem-gutter metadataContainer')
+        salary = job.find('div', class_='salary-snippet-container')
         if salary != None:
             salary = salary.get_text()
        
