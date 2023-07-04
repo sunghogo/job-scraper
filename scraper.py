@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import chromedriver_binary
 from bs4 import BeautifulSoup
+from scraper_indeed import scrape_indeed
 
 def init_webdriver():
     # Setup selenium chrome options
@@ -20,6 +21,9 @@ def init_webdriver():
 
 # Initialize webdriver instance
 driver = init_webdriver()
+
+# Start scraping
+scrape_indeed(driver, "Software Engineer", "United States")
 
 # Close webdriver
 driver.quit()
