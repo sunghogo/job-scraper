@@ -23,7 +23,7 @@ def init_webdriver():
 driver = init_webdriver()
 
 # Start scraping
-scrape_indeed(driver, "Software Engineer", "United States")
+scrape_indeed(driver, "Software Engineer", "United States", {"experience_level": "ENTRY_LEVEL", "date_posted": "1", "sort_date": "true"})
 
 # Close webdriver
 driver.quit()
