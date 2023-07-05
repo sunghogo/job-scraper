@@ -34,17 +34,18 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
 
     # Fetch url and wait until page loads
     driver.get(url)
-    timeout = 30
+    timeout = 60
     try:
         WebDriverWait(driver, timeout=timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'jobCard_mainContent')))
     except:
-        driver.save_screenshot(f"outputs/screenshots/{datetime.now()}-Error.png")
+        driver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.png")
         logging.error(f"Loading timed out {timeout}s for: {url}")
+        return
     
     # Take a screenshot
     # total_page_height = driver.execute_script("return document.body.parentNode.scrollHeight")
     # driver.set_window_size(1200, total_page_height)
-    driver.save_screenshot('outputs/screenshots/get-website-screencap.png')
+    driver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_website_screencap.png")
 
     # Fetch HTML
     initial_html = driver.page_source
