@@ -11,6 +11,7 @@ import json
 import logging
 from datetime import datetime
 from scraper_util import webdriver_wait_class, webdriver_screenshot, webdriver_write_data
+from scraper_fetch import webdriver_fetch_wait_class
 
 # Setup logging config
 logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -33,19 +34,48 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
             elif key == "page":
                 url += f"&start={value}"
 
-    # Fetch indeed url
-    driver.get(url)
+    # Fetches initial indeed page, waits for apge load, and refetches
+    webdriver_fetch_wait_class(driver = driver, url = url, class_name = 'jobCard_mainContent', timeout = 15, refetch_times = 3)
     
-    # Wait for indeed page to load, otherwise return to scraper.py module to exit the webdriver
-    try:
-        webdriver_wait_class(driver = driver, timeout=60, class_name = 'jobCard_mainContent', error_string = url)
-    except TimeoutException:
-        return
+    # # Fetch initial indeed url
+    # driver.get(url)
     
-    webdriver_screenshot(driver = driver, filename = f"indeed_intial_load")
+    # # Wait for indeed page to load, otherwise return to scraper.py module to exit the webdriver
+    # try:
+    #     webdriver_wait_class(driver = driver, timeout=60, class_name = 'jobCard_mainContent', error_string = url)
+    # except TimeoutException:
+    #     return
+    
+    # Screenshot initial load
+    webdriver_screenshot(driver = driver, filename = 'indeed_intial_load')
 
-    # Fetch HTML
+    # Fetch initial HTML
     initial_html = driver.page_source
+    initial_soup = BeautifulSoup(initial_html, 'html.parser')
+    jobs = initial_soup.find_all('table', class_='jobCard_mainContent')
+    
+    # Form job viewing url with the first job id
+    first_job_id = jobs[0].find('a').get('data-jk', None)
+    first_job_url = url + f"&vjk={first_job_id}"
+    print(first_job_url)
+    
+    # Fetches initial indeed page, waits for apge load, and refetches
+    webdriver_fetch_wait_class(driver = driver, url = first_job_url, class_name = 'jobsearch-JobComponent-description', timeout = 15, refetch_times = 3)
+    
+    # # Fetch post indeed url
+    # driver.get(first_job_url)
+    
+    # # Wait for indeed page to load, otherwise return to scraper.py module to exit the webdriver
+    # try:
+    #     webdriver_wait_class(driver = driver, timeout=60, class_name = 'jobsearch-JobComponent-description', error_string = url)
+    # except TimeoutException:
+    #     return
+    
+    # Screenshot post load
+    webdriver_screenshot(driver = driver, filename = 'indeed_post_load')
+    
+    # Fetch post html
+    post_html = driver.page_source
     initial_soup = BeautifulSoup(initial_html, 'html.parser')
     jobs = initial_soup.find_all('table', class_='jobCard_mainContent')
     jobs_els = driver.find_elements(By.CLASS_NAME, "jobCard_mainContent")
