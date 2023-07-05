@@ -6,7 +6,7 @@ from selenium.common.exceptions import TimeoutException
 from scraper_util import webdriver_wait_class
 
 # Fetches url, and refetches specified number of times after specified timeout
-def webdriver_fetch_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0, refetch_counter: int = 0):
+def webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0, refetch_counter: int = 0):
     # Fetch initial indeed url
     driver.get(url)
     
@@ -18,4 +18,4 @@ def webdriver_fetch_class(driver: WebDriver, url:str, class_name: str, timeout: 
             return
         else:
             print(f"Refetching {url} {refetch_counter + 1}x")
-            webdriver_fetch_class(driver = driver, url = url, class_name = class_name, timeout = timeout, refetch_times = refetch_times, refetch_counter = refetch_counter + 1)
+            webdriver_fetch_wait_class(driver = driver, url = url, class_name = class_name, timeout = timeout, refetch_times = refetch_times, refetch_counter = refetch_counter + 1)
