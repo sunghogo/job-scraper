@@ -19,10 +19,10 @@ def init_webdriver():
     return driver
 
 # Initialize webdriver instance
-driver = init_webdriver()
+webdriver = init_webdriver()
 
 # Start scraping
-scrape_indeed(driver=driver, position="Software Engineer", location="United States", options={"experience_level": "ENTRY_LEVEL", "date_posted": "1", "sort_date": "true"})
+scrape_indeed(webdriver=webdriver, position="Software Engineer", location="United States", options={"experience_level": "ENTRY_LEVEL", "date_posted": "1", "sort_date": "true"})
 
 # Close webdriver
-driver.quit()
+webdriver.quit()

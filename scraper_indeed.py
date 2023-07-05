@@ -14,7 +14,7 @@ from datetime import datetime
 # Setup logging config
 logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, position: str, location: str, options: Dict[str, str] = None):
+def scrape_indeed(webdriver: selenium.webdriver.chrome.webdriver.WebDriver, position: str, location: str, options: Dict[str, str] = None):
     # Initialize list containing json job data
     jobs_list = []
     
@@ -33,28 +33,28 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
                 url += f"&start={value}"
 
     # Fetch url and wait until page loads
-    driver.get(url)
+    webdriver.get(url)
     timeout = 120 + random.random() * 3
     try:
-        WebDriverWait(driver, timeout=timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'jobCard_mainContent')))
+        WebDriverWait(webdriver, timeout=timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'jobCard_mainContent')))
     except:
         # Create and save error screenshots and .html files
-        driver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.png")
+        webdriver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.png")
         with open(f"outputs/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.html", 'w', encoding='utf-8') as file:
-            file.write(BeautifulSoup(driver.page_source, 'html.parser').prettify())
+            file.write(BeautifulSoup(webdriver.page_source, 'html.parser').prettify())
             
-        # Log error and return to scraper.py module for driver shutdown
+        # Log error and return to scraper.py module for webdriver shutdown
         logging.error(f"Loading timed out {timeout}s for: {url}")
         return
     
-    # Take a screenshot (driver.set_window_size() crashes the page)
-    driver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_website_screencap.png")
+    # Take a screenshot (webdriver.set_window_size() crashes the page)
+    webdriver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_website_screencap.png")
 
     # Fetch HTML
-    initial_html = driver.page_source
+    initial_html = webdriver.page_source
     initial_soup = BeautifulSoup(initial_html, 'html.parser')
     jobs = initial_soup.find_all('table', class_='jobCard_mainContent')
-    jobs_els = driver.find_elements(By.CLASS_NAME, "jobCard_mainContent")
+    jobs_els = webdriver.find_elements(By.CLASS_NAME, "jobCard_mainContent")
     
     # Extract data
     for i, job in enumerate(jobs):
@@ -64,18 +64,18 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
         # Click on each job listing to open job body description
         jobs_els[i].click()
         try:
-            WebDriverWait(driver, timeout=timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'jobsearch-JobComponent-description')))
+            WebDriverWait(webdriver, timeout=timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'jobsearch-JobComponent-description')))
         except:
             # Create and save error screenshots and .html files
-            driver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.png")
+            webdriver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.png")
             with open(f"outputs/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.html", 'w', encoding='utf-8') as file:
-                file.write(BeautifulSoup(driver.page_source, 'html.parser').prettify())
+                file.write(BeautifulSoup(webdriver.page_source, 'html.parser').prettify())
                 
-            # Log error and return to scraper.py module for driver shutdown
+            # Log error and return to scraper.py module for webdriver shutdown
             logging.error(f"Loading indeed job descriptions timed out {timeout}s")
             return
         
-        driver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{job_id}.png")
+        webdriver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{job_id}.png")
         
         position = job.find('h2', class_='jobTitle').get_text()
         company = job.find('span', class_='companyName').get_text()
@@ -89,7 +89,7 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
         if estimated_salary != None:
             estimated_salary = estimated_salary.get_text()
             
-        html = driver.page_source
+        html = webdriver.page_source
         soup = BeautifulSoup(html, 'html.parser')
         job_details = soup.find('div', class_='jobsearch-JobComponent-description').get_text(separator='\n', strip=True)
        
