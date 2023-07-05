@@ -34,7 +34,7 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
 
     # Fetch url and wait until page loads
     driver.get(url)
-    timeout = 30 + random.random() * 3
+    timeout = 120 + random.random() * 3
     try:
         WebDriverWait(driver, timeout=timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'jobCard_mainContent')))
     except:
@@ -55,9 +55,7 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
     initial_soup = BeautifulSoup(initial_html, 'html.parser')
     jobs = initial_soup.find_all('table', class_='jobCard_mainContent')
     jobs_els = driver.find_elements(By.CLASS_NAME, "jobCard_mainContent")
-
-    print(len(jobs))
-    print(len(jobs_els))
+    
     # Extract data
     for i, job in enumerate(jobs):
         job_id = job.find('a').get('data-jk', None)
