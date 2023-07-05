@@ -2,6 +2,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from typing import Dict
 from bs4 import BeautifulSoup
 import datetime
@@ -14,15 +15,15 @@ from scraper_util import webdriver_wait_class, webdriver_screenshot, webdriver_w
 # Setup logging config
 logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def scrape_indeed(webdriver: WebDriver, position: str, location: str, options: Dict[str, str] = None):
+def scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None):
     # Initialize list containing json job data
     jobs_list = []
     
-    # Parse options and construct url
+    # Parse search options and construct url
     base_url = 'https://www.indeed.com'
-    url = f"{base_url}/jobs?q={position.replace(' ', '+')}&l={location.replace(' ', '+')}"
-    if options != None:
-        for key, value in options.items():
+    url = f"{base_url}/jobs?q={search_position.replace(' ', '+')}&l={search_location.replace(' ', '+')}"
+    if search_options != None:
+        for key, value in search_options.items():
             if key == 'experience_level':
                 url += f"&sc=0kf%3Aexplvl({value})%3B"
             elif key == "date_posted":
@@ -32,50 +33,38 @@ def scrape_indeed(webdriver: WebDriver, position: str, location: str, options: D
             elif key == "page":
                 url += f"&start={value}"
 
-    # Fetch url and wait until page loads
-    webdriver.get(url)
-    timeout = 120 + random.random() * 3
+    # Fetch indeed url
+    driver.get(url)
+    
+    # Wait for indeed page to load, otherwise return to scraper.py module to exit the webdriver
     try:
-        WebDriverWait(webdriver, timeout=timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'jobCard_mainContent')))
-    except:
-        # Create and save error screenshots and .html files
-        webdriver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.png")
-        with open(f"outputs/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.html", 'w', encoding='utf-8') as file:
-            file.write(BeautifulSoup(webdriver.page_source, 'html.parser').prettify())
-            
-        # Log error and return to scraper.py module for webdriver shutdown
-        logging.error(f"Loading timed out {timeout}s for: {url}")
+        webdriver_wait_class(driver = driver, timeout=60, class_name = 'jobCard_mainContent', error_string = url)
+    except TimeoutException:
         return
     
-    # Take a screenshot (webdriver.set_window_size() crashes the page)
-    webdriver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_website_screencap.png")
+    webdriver_screenshot(driver = driver, filename = f"indeed_intial_load")
 
     # Fetch HTML
-    initial_html = webdriver.page_source
+    initial_html = driver.page_source
     initial_soup = BeautifulSoup(initial_html, 'html.parser')
     jobs = initial_soup.find_all('table', class_='jobCard_mainContent')
-    jobs_els = webdriver.find_elements(By.CLASS_NAME, "jobCard_mainContent")
+    jobs_els = driver.find_elements(By.CLASS_NAME, "jobCard_mainContent")
     
     # Extract data
     for i, job in enumerate(jobs):
+        # Get job id
         job_id = job.find('a').get('data-jk', None)
         # link = job.find('a').get('href', None)
         
-        # Click on each job listing to open job body description
+        # Click on each job listing to open job details body description
         jobs_els[i].click()
+        # Wait for job details body description to load, otherwise return to scraper.py module to exit the webdriver
         try:
-            WebDriverWait(webdriver, timeout=timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'jobsearch-JobComponent-description')))
-        except:
-            # Create and save error screenshots and .html files
-            webdriver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.png")
-            with open(f"outputs/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.html", 'w', encoding='utf-8') as file:
-                file.write(BeautifulSoup(webdriver.page_source, 'html.parser').prettify())
-                
-            # Log error and return to scraper.py module for webdriver shutdown
-            logging.error(f"Loading indeed job descriptions timed out {timeout}s")
+            webdriver_wait_class(driver = driver, timeout=30, class_name = 'jobsearch-JobComponent-description', error_string = url)
+        except TimeoutException:
             return
         
-        webdriver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{job_id}.png")
+        webdriver_screenshot(driver = driver, filename = f"{job_id}")
         
         position = job.find('h2', class_='jobTitle').get_text()
         company = job.find('span', class_='companyName').get_text()
@@ -89,7 +78,7 @@ def scrape_indeed(webdriver: WebDriver, position: str, location: str, options: D
         if estimated_salary != None:
             estimated_salary = estimated_salary.get_text()
             
-        html = webdriver.page_source
+        html = driver.page_source
         soup = BeautifulSoup(html, 'html.parser')
         job_details = soup.find('div', class_='jobsearch-JobComponent-description').get_text(separator='\n', strip=True)
        
@@ -105,16 +94,8 @@ def scrape_indeed(webdriver: WebDriver, position: str, location: str, options: D
         }
         
         jobs_list.append(job_dict)
-    # Job Type
-    # class="css-fhkva6 eu4oa1w0"
-    # class="css-1oqmop4 eu4oa1w0"
-    print("Indeed scraped!")
 
-    # Write output html
-    # # Open the file in write mode
-    # with open('outputs/output.html', 'w', encoding='utf-8') as file:
-    #     file.write(soup.prettify())
+    # Write output json data file
+    webdriver_write_data(data = jobs_list, filename = f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}")
     
-    # Write output json
-    with open('outputs/output.json', 'w') as f:
-        json.dump(jobs_list, f, indent=4)
+    print("Indeed scraped!")
