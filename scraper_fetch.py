@@ -7,10 +7,10 @@ from scraper_util import webdriver_wait_class
 
 # Fetches url, and refetches specified number of times after specified timeout
 def webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0, refetch_counter: int = 0):
-    # Fetch initial indeed url
+    # Fetch url
     driver.get(url)
     
-    # Wait for indeed page to load, otherwise return to scraper.py module to exit the webdriver
+    # Wait for page to load, otherwise return to scraper.py module to exit the webdriver
     try:
         webdriver_wait_class(driver = driver, timeout=timeout, class_name = class_name, error_string = url)
     except TimeoutException:
