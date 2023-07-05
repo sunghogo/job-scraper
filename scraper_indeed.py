@@ -25,7 +25,7 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
     driver.get(url)
     total_page_height = driver.execute_script("return document.body.parentNode.scrollHeight")
     driver.set_window_size(1200, total_page_height)
-    driver.save_screenshot('screenshots/get-website-screencap.png')
+    driver.save_screenshot('outputs/screenshots/get-website-screencap.png')
 
     # Fetch HTML
     initial_html = driver.page_source
@@ -39,7 +39,7 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
         # link = job.find('a').get('href', None)
         jobs_el[i].click()
         time.sleep(5 + random.random())
-        driver.save_screenshot(f"screenshots/{job_id}.png")
+        driver.save_screenshot(f"outputs/screenshots/{job_id}.png")
         
         html = driver.page_source
         soup = BeautifulSoup(html, 'html.parser')
