@@ -12,7 +12,7 @@ import logging
 from datetime import datetime
 
 # Setup logging config
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, position: str, location: str, options: Dict[str, str] = None):
     # Initialize list containing json job data
@@ -36,10 +36,13 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
     driver.get(url)
     timeout = 60
     try:
-        WebDriverWait(driver, timeout=timeout).until(EC.presence_of_element_located((By.CLASS_NAME, 'jobCard_mainContent')))
+        WebDriverWait(driver, timeout=timeout, pollingrate=1).until(EC.presence_of_element_located((By.CLASS_NAME, 'jobCard_mainContent')))
     except:
         driver.save_screenshot(f"outputs/screenshots/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.png")
+        with open(f"outputs/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_error.html", 'w', encoding='utf-8') as file:
+            file.write(BeautifulSoup(driver.page_source, 'html.parser').prettify())
         logging.error(f"Loading timed out {timeout}s for: {url}")
+
         return
     
     # Take a screenshot
@@ -102,7 +105,7 @@ def scrape_indeed(driver: selenium.webdriver.chrome.webdriver.WebDriver, positio
 
     # Write output html
     # # Open the file in write mode
-    # with open('output.html', 'w', encoding='utf-8') as file:
+    # with open('outputs/output.html', 'w', encoding='utf-8') as file:
     #     file.write(soup.prettify())
     
     # Write output json
