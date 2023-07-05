@@ -12,7 +12,7 @@ from typing import Dict, List
 
 outputs_path = "outputs"
 screenshots_path = f"{outputs_path}/screenshots"
-error_path = f"{outputs_path}/error"
+error_path = f"{outputs_path}/errors"
 data_path = f"{outputs_path}/data"
 
 # Make webdriver wait until class loads, otherwise create error files in specified error directory and raise exception
