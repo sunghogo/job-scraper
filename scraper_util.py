@@ -30,10 +30,10 @@ def webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str, error
 # Saves screenshots in specified screenshots directory
 # webdriver.set_window_size() crashes the page
 def webdriver_screenshot(driver: WebDriver, filename: str):
-    filepath = f"{screenshots_path}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{filename}"
+    filepath = f"{screenshots_path}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{filename}.png"
     driver.save_screenshot(filepath)
     
 # Write output json in specified data directory
-def webdriver_write_data(data: List[Dict[str, str]]):
-    with open(f"{data_path}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_data.json", 'w') as f:
+def webdriver_write_data(data: List[Dict[str, str]], filename: str):
+    with open(f"{data_path}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{filename}.json", 'w') as f:
         json.dump(data, f, indent=4)
