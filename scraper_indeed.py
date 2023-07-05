@@ -1,20 +1,20 @@
-import selenium
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from typing import Dict
 from bs4 import BeautifulSoup
-import time
+import datetime
 import random
 import json
-import os
 import logging
 from datetime import datetime
+from scraper_util import webdriver_wait_class, webdriver_screenshot, webdriver_write_data
 
 # Setup logging config
 logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def scrape_indeed(webdriver: selenium.webdriver.chrome.webdriver.WebDriver, position: str, location: str, options: Dict[str, str] = None):
+def scrape_indeed(webdriver: WebDriver, position: str, location: str, options: Dict[str, str] = None):
     # Initialize list containing json job data
     jobs_list = []
     
@@ -118,7 +118,3 @@ def scrape_indeed(webdriver: selenium.webdriver.chrome.webdriver.WebDriver, posi
     # Write output json
     with open('outputs/output.json', 'w') as f:
         json.dump(jobs_list, f, indent=4)
-
-    for file_name in os.listdir('./outputs'):
-        if os.path.isfile(file_name):
-            print(file_name)
