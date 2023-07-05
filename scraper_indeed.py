@@ -1,13 +1,9 @@
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-from typing import Dict
+from typing import Dict, List
 from bs4 import BeautifulSoup
-import datetime
-import random
-import json
 import logging
 from datetime import datetime
 from scraper_util import webdriver_wait_class, webdriver_screenshot, webdriver_write_data
@@ -50,36 +46,41 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     for i, job in enumerate(jobs):
         # Get job id
         job_id = job.find('a').get('data-jk', None)
-        # link = job.find('a').get('href', None)
         
         # Click on each job listing to open job details body description
         jobs_els[i].click()
-        # Wait for job details body description to load, otherwise return to scraper.py module to exit the webdriver
+        
+        # Wait for righthand job details body description to load, otherwise return to scraper.py module to exit the webdriver
         try:
             webdriver_wait_class(driver = driver, timeout=30, class_name = 'jobsearch-JobComponent-description', error_string = url)
         except TimeoutException:
             return
         
-        webdriver_screenshot(driver = driver, filename = f"{job_id}")
+        # Screenshot each job position
+        # webdriver_screenshot(driver = driver, filename = f"{job_id}")
         
+        # Extract text content of interest from lefthand job summary cards
         position = job.find('h2', class_='jobTitle').get_text()
         company = job.find('span', class_='companyName').get_text()
         location = job.find('div', class_='companyLocation').get_text()
-        
-        # metadata = job.find('div', class_='metadataContainer')
         salary = job.find('div', class_='salary-snippet-container')
         if salary != None:
             salary = salary.get_text()
         estimated_salary = job.find('div', class_='estimated-salary-container')
         if estimated_salary != None:
             estimated_salary = estimated_salary.get_text()
-            
+        
+        # Re-extract and parse html after righthand job details body description loads
         html = driver.page_source
         soup = BeautifulSoup(html, 'html.parser')
+        
+        # Extract full job details
         job_details = soup.find('div', class_='jobsearch-JobComponent-description').get_text(separator='\n', strip=True)
        
+       # Form json dictionary containing extracted job information
         job_dict = {
-            'job_id': job_id,       
+            'job_id': job_id,
+            "date_posted": datetime.now().strftime('%Y-%m-%d'),
             'position': position,
             'company': company,
             'location': location,
@@ -89,6 +90,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
             'job_details': job_details
         }
         
+        # Push json dictionary into list
         jobs_list.append(job_dict)
 
     # Write output json data file
