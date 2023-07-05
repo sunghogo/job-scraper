@@ -1,6 +1,9 @@
-# Commands to build / run the docker image FOR WINDOWS
+# Command to build docker image
 # docker build -t job-scraper .
+# Command to run docker image for WINDOWS
 # docker run -v ${PWD}\outputs:/root/outputs -p 8080:8000 job-scraper
+# Command to run docker image for LINUX/MACOS
+# docker run -v $(pwd)\outputs:/root/outputs -p 8080:8000 job-scraper
 
 # Select Python distribtion
 FROM python:3.9
