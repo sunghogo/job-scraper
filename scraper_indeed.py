@@ -6,17 +6,15 @@ from typing import Dict, List
 from bs4 import BeautifulSoup
 import logging
 from datetime import datetime
+import math
 from scraper_util import webdriver_wait_class, webdriver_screenshot, webdriver_write_data
 from scraper_fetch import webdriver_fetch_wait_class
 
 # Setup logging config
 logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None):
-    # Initialize list containing json job data
-    jobs_list = []
-    
-    # Parse search options and construct url
+# Parse search strings and options and to construct indeed url
+def construct_indeed_url(search_position: str, search_location: str, search_options: Dict[str, str] = None):
     base_url = 'https://www.indeed.com'
     url = f"{base_url}/jobs?q={search_position.replace(' ', '+')}&l={search_location.replace(' ', '+')}"
     if search_options != None:
@@ -28,24 +26,42 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
             elif key == "sort_date":
                 url += f"&sort=date"
             elif key == "page":
-                url += f"&start={value}"
+                url += f"&start={str(int(value) * 10 - 10)}"
+                
+# def extract_indeed_page_data():
+    
+    
+def scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None):
+    # Initialize list containing json job data
+    jobs_list = []
+    
+    # Construct initial indeed url
+    url = construct_indeed_url(search_position, search_location, search_options)
 
-    # Fetches initial indeed page, waits for apge load, and refetches
+    # Fetches initial indeed page, waits for page load, and refetches if it timesout
     webdriver_fetch_wait_class(driver = driver, url = url, class_name = 'jobCard_mainContent', timeout = 15, refetch_times = 3)
 
     # Screenshot initial load
     webdriver_screenshot(driver = driver, filename = 'indeed_intial_load')
 
+    # Fetch initial HTML and calculate number of pages
+    initial_html = driver.page_source
+    initial_soup = BeautifulSoup(initial_html, 'html.parser')
+    job_count = driver.find_element(By.CLASS_NAME, "jobsearch-JobCountAndSortPane-jobCount")
+    page_num = math.ceil(job_count / 15)
+    
     # Fetch initial HTML
     initial_html = driver.page_source
     initial_soup = BeautifulSoup(initial_html, 'html.parser')
     jobs = initial_soup.find_all('table', class_='jobCard_mainContent')
     jobs_els = driver.find_elements(By.CLASS_NAME, "jobCard_mainContent")
+
     
     # Extract data
     for i, job in enumerate(jobs):
         # Get job id
         job_id = job.find('a').get('data-jk', None)
+        job_link = job_id = job.find('a').get('href', None)
         
         # Click on each job listing to open job details body description
         jobs_els[i].click()
@@ -86,7 +102,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
             'location': location,
             'salary': salary,
             'estimated_salary': estimated_salary,
-            'link': f"{base_url}/viewjob?jk={job_id}",
+            'link': f"https://www.indeed.com{job_link}",
             'job_details': job_details
         }
         
