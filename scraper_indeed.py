@@ -27,9 +27,9 @@ def construct_indeed_url(search_position: str, search_location: str, search_opti
                 url += f"&sort=date"
             elif key == "page":
                 url += f"&start={str(int(value) * 10 - 10)}"
+    return url
                 
 # def extract_indeed_page_data():
-    
     
 def scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None):
     # Initialize list containing json job data
@@ -47,8 +47,9 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     # Fetch initial HTML and calculate number of pages
     initial_html = driver.page_source
     initial_soup = BeautifulSoup(initial_html, 'html.parser')
-    job_count = driver.find_element(By.CLASS_NAME, "jobsearch-JobCountAndSortPane-jobCount")
-    page_num = math.ceil(job_count / 15)
+    job_count = initial_soup.find('div', class_='jobsearch-JobCountAndSortPane-jobCount').get_text().split(' ')[0]
+    page_num = math.ceil(int(job_count) / 15)
+    print(job_count, page_num)
     
     # Fetch initial HTML
     initial_html = driver.page_source
@@ -61,7 +62,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     for i, job in enumerate(jobs):
         # Get job id
         job_id = job.find('a').get('data-jk', None)
-        job_link = job_id = job.find('a').get('href', None)
+        job_link = job.find('a').get('href', None)
         
         # Click on each job listing to open job details body description
         jobs_els[i].click()
