@@ -18,7 +18,12 @@ logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s -
 # Parse search strings and options and to construct indeed url
 def construct_indeed_url(search_position: str, search_location: str, search_options: Dict[str, str] = None):
     base_url = 'https://www.indeed.com'
-    url = f"{base_url}/jobs?q={search_position.replace(' ', '+')}&l={search_location.replace(' ', '+')}"
+    
+    parsed_search_position = search_position.replace(' ', '+')
+    parsed_search_location = search_location.replace(' ', '+') if ',' not in search_location else f"{search_location.split(',')[0].replace(' ', '+')}%2C+{search_location.split(',')[1].strip()}"
+    
+    url = f"{base_url}/jobs?q={parsed_search_position}&l={parsed_search_location}"
+    
     if search_options != None:
         for key, value in search_options.items():
             if key == 'experience_level': # "ENTRY_LEVEL"
@@ -31,6 +36,7 @@ def construct_indeed_url(search_position: str, search_location: str, search_opti
                 url += f"%filter={value}"
             elif key == "page": # "1", "2", ...
                 url += f"&start={str(int(value) * 10 - 10)}"
+                
     return url
 
 # Navigates through indeed search pages and extracts job listing data
