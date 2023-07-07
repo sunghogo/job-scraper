@@ -119,7 +119,9 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
             
         print(f"Indeed {search_position} in {search_location} page {str(page)} complete")
 
-    # Write output json data file
-    webdriver_write_data(data = jobs_list, filename = f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}")
+        # Write output json data file
+        webdriver_write_data(data = jobs_list, filename = f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}")
+        
+        time.sleep(30 + random.random())
     
     print(f"Indeed {search_position} in {search_location} scraped!")
