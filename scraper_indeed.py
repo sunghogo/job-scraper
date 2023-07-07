@@ -53,10 +53,6 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         # Fetch page HTML and parsed soup
         page_html = driver.page_source
         page_soup = BeautifulSoup(page_html, 'html.parser')
-     
-        # If there are no next page url due to indeed cutting off listings early, end search
-        if page_soup.find('a', {'data-testid': 'pagination-page-next'}) is None:
-            break
         
         # Extract job listings from page, and add to jobs list
         list_page_jobs_data = extract_indeed_page(driver = driver)
@@ -71,6 +67,10 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         # Sleep 20 seconds between page fetches
         if page != total_page_num:
             time.sleep(20 + random.random())
+            
+        # If there are no next page url due to indeed cutting off search results, end search early
+        if page_soup.find('a', {'data-testid': 'pagination-page-next'}) is None:
+            break
     
     # Return list of job data
     return list_jobs_data
