@@ -21,15 +21,15 @@ def construct_indeed_url(search_position: str, search_location: str, search_opti
     url = f"{base_url}/jobs?q={search_position.replace(' ', '+')}&l={search_location.replace(' ', '+')}"
     if search_options != None:
         for key, value in search_options.items():
-            if key == 'experience_level':
+            if key == 'experience_level': # "ENTRY_LEVEL"
                 url += f"&sc=0kf%3Aexplvl({value})%3B"
             elif key == "sort_date":
                 url += f"&sort=date"
-            elif key == "date_posted":
+            elif key == "date_posted": # "0", "1"
                 url += f"&fromage={value}"
-            elif key == "filter_dupe":
+            elif key == "filter_dupe": # "0", "1"
                 url += f"%filter={value}"
-            elif key == "page":
+            elif key == "page": # "1", "2", ...
                 url += f"&start={str(int(value) * 10 - 10)}"
     return url
     
