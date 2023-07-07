@@ -23,10 +23,12 @@ def construct_indeed_url(search_position: str, search_location: str, search_opti
         for key, value in search_options.items():
             if key == 'experience_level':
                 url += f"&sc=0kf%3Aexplvl({value})%3B"
-            elif key == "date_posted":
-                url += f"&fromage={value}"
             elif key == "sort_date":
                 url += f"&sort=date"
+            elif key == "date_posted":
+                url += f"&fromage={value}"
+            elif key == "filter_dupe":
+                url += f"%filter={value}"
             elif key == "page":
                 url += f"&start={str(int(value) * 10 - 10)}"
     return url
@@ -61,6 +63,9 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
         # Fetches each job page, waits for page load, and refetches if it timesout
         webdriver_fetch_wait_class(driver = driver, url = page_url, class_name = 'jobCard_mainContent', timeout = 15, refetch_times = 3)
         
+        # Screenshot initial load
+        webdriver_screenshot(driver = driver, filename = f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}_page_{page}")
+    
         # Fetch page HTML and parsed soup
         page_html = driver.page_source
         page_soup = BeautifulSoup(page_html, 'html.parser')
@@ -75,7 +80,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
             
             # Click on each job listing to open job details body description
             jobs_els[i].click()
-            time.sleep(3 + random.random())
+            time.sleep(2 + random.random())
             
             # Wait for righthand job details body description to load, otherwise return to scraper.py module to exit the webdriver
             try:
@@ -119,9 +124,13 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
             
         print(f"Indeed {search_position} in {search_location} page {str(page)} complete")
 
-        # Write output json data file
-        webdriver_write_data(data = jobs_list, filename = f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}")
+        # Write intermediate output json data file
+        webdriver_write_data(data = jobs_list, filename = f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}_page_1_to_{page}")
         
-        time.sleep(30 + random.random())
+        if page != total_page_num:
+            time.sleep(20 + random.random())
+    
+    # Write final output json data file 
+    webdriver_write_data(data = jobs_list, filename = f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}")
     
     print(f"Indeed {search_position} in {search_location} scraped!")
