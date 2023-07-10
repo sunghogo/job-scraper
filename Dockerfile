@@ -32,4 +32,4 @@ RUN pip3 install -r requirements.txt
 EXPOSE 8000
 
 # Run app
-CMD ["python", "-u", "scraper.py"]
+CMD ["python", "-u", "scraper/scraper.py"]
