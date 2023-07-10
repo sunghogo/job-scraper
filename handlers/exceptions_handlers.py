@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Decorator that handles general exceptions by printing the message and then raising them
-def handle_exceptions_decorator(func):
+def exceptions_handler(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -21,7 +21,7 @@ def handle_exceptions_decorator(func):
 
 
 # Decorator that handles timeout exceptions by printing the message and then raising them
-def handle_timeout_exceptions_decorator(func):
+def timeout_exceptions_handler(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
