@@ -6,16 +6,20 @@ from selenium.common.exceptions import TimeoutException
 from scraper.scraper_util import webdriver_wait_class
 
 # Fetches url, and refetches specified number of times after specified timeout
-def webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0, refetch_counter: int = 0):
+def webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0):
     # Fetch url
     driver.get(url)
     
-    # Wait for page to load, otherwise return to scraper.py module to exit the webdriver
-    try:
-        webdriver_wait_class(driver = driver, timeout=timeout, class_name = class_name)
-    except TimeoutException:
-        if refetch_counter >= refetch_times:
+    exception = TimeoutException()
+    # Wait for page to load, and if it does, shortcircuit function and return
+    # Otherwise, after specified refetch_times, grab the most recent exception and raise it
+    for i in range(refetch_times):
+        try:
+            webdriver_wait_class(driver = driver, timeout=timeout, class_name = class_name)
             return
-        else:
-            print(f"Refetching {url} {refetch_counter + 1}x")
-            webdriver_fetch_wait_class(driver = driver, url = url, class_name = class_name, timeout = timeout, refetch_times = refetch_times, refetch_counter = refetch_counter + 1)
+        except TimeoutException as e:
+            exception = e
+            continue
+    
+    # Raise most recent timeout exception
+    raise exception
