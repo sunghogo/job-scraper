@@ -16,7 +16,7 @@ def exceptions_handler(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            logging.error(f"Exception occurred: {str(e)}", exc_info=True)
+            logging.error(f"Exception occurred: {str(e)}", exc_info=False)
     return wrapper
 
 
@@ -27,7 +27,8 @@ def timeout_exceptions_handler(func):
         try:
             return func(*args, **kwargs)
         except TimeoutException:
-            kwargs["driver"].save_screenshot(
+            # DEVONLY Save screenshot whenever timeout exception occurs
+            kwargs['driver'].save_screenshot(
                 f"{error_path}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_timeout_exception.png")
-            raise TimeoutException(f"Waiting for {kwargs['class_name']} timed out after {kwargs['timeout']}s")
+            raise TimeoutException(f"Waiting for {kwargs['class_name']} at {kwargs['driver'].current_url} timed out after {kwargs['timeout']}s")
     return wrapper
