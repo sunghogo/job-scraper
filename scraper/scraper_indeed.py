@@ -75,13 +75,13 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         list_page_jobs_data = extract_indeed_page(driver=driver)
         list_jobs_data = list_jobs_data + list_page_jobs_data
 
-        # Print to console that page scrape is done
+        # DEVONLY Print to console that page scrape is done
         print(
             f"Indeed: {search_position} in {search_location} page {str(page)} complete")
 
         # DEVONLY Write intermediate output json data file
         webdriver_write_data(
-            data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}_page_1_to_{page}")
+            data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}_pages_1_to_{page}")
 
         # Sleep 20 seconds between page fetches
         if page != total_page_num:
