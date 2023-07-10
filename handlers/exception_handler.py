@@ -4,6 +4,7 @@ logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
+# Decorator that handles exceptions by printing the message and then raising them
 def handle_exceptions_decorator(func):
     def wrapper(*args, **kwargs):
         try:
