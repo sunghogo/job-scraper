@@ -33,10 +33,10 @@ def construct_indeed_url(search_position: str, search_location: str, search_opti
                 url += f"&sc=0kf%3Aexplvl({value})%3B"
             elif key == "sort_date":
                 url += f"&sort=date"
-            elif key == "date_posted":  # "0", "1"
+            elif key == "date_posted":  # "1", "3", "7"
                 url += f"&fromage={value}"
-            elif key == "filter_dupe":  # "0", "1"
-                url += f"%filter={value}"
+            elif key == "filter_dupe":  # "0" to turn off dupe filter, "1"
+                url += f"&filter={value}"
             elif key == "page":  # "1", "2", ...
                 url += f"&start={str(int(value) * 10 - 10)}"
 
@@ -57,11 +57,15 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
 
         # Fetches each job page, waits for page load, and refetches if it timesout
         webdriver_fetch_wait_class(
-            driver=driver, url=page_url, class_name='jobCard_mainContent', timeout=15, refetch_times=3)
+            driver=driver, url=page_url, class_name='jobCard_mainContent', timeout=30, refetch_times=3)
 
         # Screenshot initial load
         webdriver_screenshot(
             driver=driver, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}_page_{page}")
+
+        # Print url that is currently being scraped
+        print(
+            f"Scraping: {driver.current_url}")
 
         # Fetch page HTML and parsed soup
         page_html = driver.page_source
@@ -73,7 +77,7 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
 
         # Print to console that page scrape is done
         print(
-            f"Indeed {search_position} in {search_location} page {str(page)} complete")
+            f"Indeed: {search_position} in {search_location} page {str(page)} complete")
 
         # Write intermediate output json data file
         webdriver_write_data(
@@ -142,7 +146,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         soup = BeautifulSoup(html, 'html.parser')
 
         # Extract full job details
-        job_details = soup.find(
+        job_full_description = soup.find(
             'div', class_='jobsearch-JobComponent-description').get_text(separator='\n', strip=True)
 
         # Form json dictionary containing extracted job information
@@ -155,7 +159,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             'salary': salary,
             'estimated_salary': estimated_salary,
             'link': f"https://www.indeed.com{job_link}",
-            'job_details': job_details
+            'job_details': job_full_description
         }
 
         # Push json dictionary into list
@@ -196,4 +200,4 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
         data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}")
 
     # Print to console that entire scrape is done
-    print(f"Indeed {search_position} in {search_location} scraped!")
+    print(f"Indeed: {search_position} in {search_location} scraped!")
