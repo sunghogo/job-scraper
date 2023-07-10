@@ -21,6 +21,7 @@ def exceptions_handler(func):
 
 
 # Decorator that handles timeout exceptions by printing the message and then raising them
+# Based on arguments passed to scraper_util.py: webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str)
 def timeout_exceptions_handler(func):
     def wrapper(*args, **kwargs):
         try:
