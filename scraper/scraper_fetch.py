@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-from scraper_util import webdriver_wait_class
+from scraper.scraper_util import webdriver_wait_class
 
 # Fetches url, and refetches specified number of times after specified timeout
 def webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0, refetch_counter: int = 0):
