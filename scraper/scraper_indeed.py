@@ -9,8 +9,9 @@ from datetime import datetime
 import math
 import time
 import random
-from scraper_util import webdriver_wait_class, webdriver_screenshot, webdriver_write_data
-from scraper_fetch import webdriver_fetch_wait_class
+from scraper.scraper_util import webdriver_wait_class, webdriver_screenshot, webdriver_write_data
+from scraper.scraper_fetch import webdriver_fetch_wait_class
+from handlers.exceptions_handlers import exceptions_handler
 
 # Setup logging config
 logging.basicConfig(level=logging.WARNING,
@@ -57,7 +58,7 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
 
         # Fetches each job page, waits for page load, and refetches if it timesout
         webdriver_fetch_wait_class(
-            driver=driver, url=page_url, class_name='jobCard_mainContent', timeout=30, refetch_times=3)
+            driver=driver, url=page_url, class_name='jobCard_mainContent', timeout=15, refetch_times=3)
 
         # DEVONLY Screenshot initial load
         webdriver_screenshot(
@@ -133,13 +134,13 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         company = job.find('span', class_='companyName').get_text()
         location = job.find('div', class_='companyLocation').get_text()
 
-        # # Extract text content for metadata bubble
-        # salary = job.find('div', class_='salary-snippet-container')
-        # if salary != None:
-        #     salary = salary.get_text()
-        # estimated_salary = job.find('div', class_='estimated-salary-container')
-        # if estimated_salary != None:
-        #     estimated_salary = estimated_salary.get_text()
+        # Extract text content for metadata bubble
+        salary = job.find('div', class_='salary-snippet-container')
+        if salary != None:
+            salary = salary.get_text()
+        estimated_salary = job.find('div', class_='estimated-salary-container')
+        if estimated_salary != None:
+            estimated_salary = estimated_salary.get_text()
 
         # Re-extract and parse html after righthand job details body description loads
         html = driver.page_source
@@ -157,9 +158,9 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             job_description = job_description.get_text(
                 separator='\n', strip=True)
 
-        # Extract full job details
-        job_full_description = soup.find(
-            'div', class_='jobsearch-JobComponent-description').get_text(separator='\n', strip=True)
+        # # Extract full job details
+        # job_full_description = soup.find(
+        #     'div', class_='jobsearch-JobComponent-description').get_text(separator='\n', strip=True)
 
         # Form json dictionary containing extracted job information
         job_dict = {
@@ -168,8 +169,8 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             'position': position,
             'company': company,
             'location': location,
-            # 'salary': salary,
-            # 'estimated_salary': estimated_salary,
+            'salary': salary,
+            'estimated_salary': estimated_salary,
             'detail': job_details,
             'description': job_description,
             'link': f"https://www.indeed.com{job_link}",
@@ -184,6 +185,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
 
 
 # Scrapes indeed with the specified job search query terms nad options
+@exceptions_handler
 def scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None) -> List[Dict[str, str]]:
     # Construct initial indeed url
     url = construct_indeed_url(
