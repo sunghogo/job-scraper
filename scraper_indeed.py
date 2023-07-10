@@ -59,11 +59,11 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         webdriver_fetch_wait_class(
             driver=driver, url=page_url, class_name='jobCard_mainContent', timeout=30, refetch_times=3)
 
-        # Screenshot initial load
+        # DEVONLY Screenshot initial load
         webdriver_screenshot(
             driver=driver, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}_page_{page}")
 
-        # Print url that is currently being scraped
+        # DEVONLY Print url that is currently being scraped
         print(
             f"Scraping: {driver.current_url}")
 
@@ -79,7 +79,7 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         print(
             f"Indeed: {search_position} in {search_location} page {str(page)} complete")
 
-        # Write intermediate output json data file
+        # DEVONLY Write intermediate output json data file
         webdriver_write_data(
             data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}_page_1_to_{page}")
 
@@ -193,7 +193,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     webdriver_fetch_wait_class(
         driver=driver, url=url, class_name='jobCard_mainContent', timeout=15, refetch_times=3)
 
-    # Screenshot initial load
+    # DEVONLY Screenshot initial load
     webdriver_screenshot(driver=driver, filename='indeed_intial_load')
 
     # Fetch initial HTML and parsed soup
