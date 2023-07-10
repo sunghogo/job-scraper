@@ -8,7 +8,7 @@ import random
 from datetime import datetime
 import json
 from typing import Dict, List
-from handlers.exception_handler import handle_timeout_exceptions_decorator
+from handlers.exceptions_handlers import timeout_exceptions_handler
 
 # Declare outputs directory paths
 outputs_path = "outputs"
@@ -18,7 +18,7 @@ data_path = f"{outputs_path}/data"
 
 
 # Make webdriver wait until class loads, otherwise create error files in specified error directory and raise exception
-@handle_timeout_exceptions_decorator
+@timeout_exceptions_handler
 def webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str):
     timeout += random.random()
     WebDriverWait(driver, timeout=timeout).until(
