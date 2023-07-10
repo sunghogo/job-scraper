@@ -118,32 +118,44 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         # Click on each job listing to open job details body description
         jobs_els[i].click()
 
-        # Sleep 2 seconds between job detail clicks
-        time.sleep(2 + random.random())
-
         # Wait for righthand job details body description to load, otherwise return to scraper.py module to exit the webdriver
         try:
             webdriver_wait_class(
-                driver=driver, timeout=15, class_name='jobsearch-JobComponent-description', error_string=driver.current_url)
+                driver=driver, timeout=15, class_name='jobsearch-BodyContainer', error_string=driver.current_url)
         except TimeoutException:
             return
+
+        # Sleep 2 seconds between job detail clicks wait
+        time.sleep(2 + random.random())
 
         # Extract text content of interest from lefthand job summary cards
         position = job.find('h2', class_='jobTitle').get_text()
         company = job.find('span', class_='companyName').get_text()
         location = job.find('div', class_='companyLocation').get_text()
 
-        # Extract text content for metadata bubble
-        salary = job.find('div', class_='salary-snippet-container')
-        if salary != None:
-            salary = salary.get_text()
-        estimated_salary = job.find('div', class_='estimated-salary-container')
-        if estimated_salary != None:
-            estimated_salary = estimated_salary.get_text()
+        # # Extract text content for metadata bubble
+        # salary = job.find('div', class_='salary-snippet-container')
+        # if salary != None:
+        #     salary = salary.get_text()
+        # estimated_salary = job.find('div', class_='estimated-salary-container')
+        # if estimated_salary != None:
+        #     estimated_salary = estimated_salary.get_text()
 
         # Re-extract and parse html after righthand job details body description loads
         html = driver.page_source
         soup = BeautifulSoup(html, 'html.parser')
+
+        # Extract righthand job details section
+        job_details = soup.find('div', {"id": "jobDetailsSection"})
+        if job_details is not None:
+            job_details = job_details.get_text(
+                separator='\n', strip=True)
+
+        # Extract righthand job description
+        job_description = soup.find('div', {"id": "jobDescriptionText"})
+        if job_description is not None:
+            job_description = job_description.get_text(
+                separator='\n', strip=True)
 
         # Extract full job details
         job_full_description = soup.find(
@@ -156,10 +168,12 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             'position': position,
             'company': company,
             'location': location,
-            'salary': salary,
-            'estimated_salary': estimated_salary,
+            # 'salary': salary,
+            # 'estimated_salary': estimated_salary,
+            'detail': job_details,
+            'description': job_description,
             'link': f"https://www.indeed.com{job_link}",
-            'job_details': job_full_description
+            # 'job_details': job_full_description
         }
 
         # Push json dictionary into list
