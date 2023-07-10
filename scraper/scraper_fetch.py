@@ -12,7 +12,7 @@ def webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, time
     
     # Wait for page to load, otherwise return to scraper.py module to exit the webdriver
     try:
-        webdriver_wait_class(driver = driver, timeout=timeout, class_name = class_name, error_string = url)
+        webdriver_wait_class(driver = driver, timeout=timeout, class_name = class_name)
     except TimeoutException:
         if refetch_counter >= refetch_times:
             return

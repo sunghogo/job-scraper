@@ -121,7 +121,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         # Wait for righthand job details body description to load, otherwise return to scraper.py module to exit the webdriver
         try:
             webdriver_wait_class(
-                driver=driver, timeout=15, class_name='jobsearch-BodyContainer', error_string=driver.current_url)
+                driver=driver, timeout=15, class_name='jobsearch-BodyContainer')
         except TimeoutException:
             return
 
