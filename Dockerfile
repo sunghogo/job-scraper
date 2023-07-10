@@ -1,9 +1,9 @@
 # Command to build docker image
 # docker build -t job-scraper .
 # Command to run docker image for WINDOWS
-# docker run -v ${PWD}\outputs:/root/outputs -p 8080:8000 job-scraper
+# docker run -v ${PWD}\outputs:/root/outputs -p 8080:8080 job-scraper
 # Command to run docker image for LINUX/MACOS
-# docker run -v $(pwd)\outputs:/root/outputs -p 8080:8000 job-scraper
+# docker run -v $(pwd)\outputs:/root/outputs -p 8080:8080 job-scraper
 
 # Select Python distribtion
 FROM python:3.9
@@ -28,8 +28,8 @@ COPY . .
 # Install python dependencies
 RUN pip3 install -r requirements.txt
 
-# Expose container port 8000 for local access
-EXPOSE 8000
+# Expose container port 8080 for local access
+EXPOSE 8080
 
 # Run app
-CMD ["python", "-u", "scraper/scraper.py"]
+CMD ["python", "-u", "app.py"]
