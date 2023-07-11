@@ -9,7 +9,7 @@ import math
 import time
 import random
 from scraper.scraper_fetch import webdriver_fetch_wait_class, webdriver_wait_class
-from util.util import webdriver_screenshot, append_json_data
+from util.util import webdriver_screenshot, write_json_data
 from handlers.exceptions_handlers import exceptions_handler
 
 
@@ -77,8 +77,8 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
             f"Indeed: {search_position} in {search_location} page {str(page)} complete")
 
         #  Write/appends page results to output json data file
-        json_filepath = append_json_data(
-            data=list_page_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}", filepath = json_filepath)
+        json_filepath = write_json_data(
+            data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}", filepath = json_filepath)
 
         # Sleep 20 seconds between page fetches
         if page != total_page_num:
