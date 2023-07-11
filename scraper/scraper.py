@@ -1,6 +1,3 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-import chromedriver_binary
 from scraper.scraper_indeed import scrape_indeed
 from scraper.scraper_init import init_webdriver
 
