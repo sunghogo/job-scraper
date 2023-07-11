@@ -76,7 +76,7 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         print(
             f"Indeed: {search_position} in {search_location} page {str(page)} complete")
 
-        # DEVONLY Write intermediate output json data file
+        #  Write/appends page results to output json data file
         json_filepath = append_json_data(
             data=list_page_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}", filepath = json_filepath)
 
@@ -122,8 +122,8 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         except TimeoutException:
             return
 
-        # Sleep 2 seconds between job detail clicks wait
-        time.sleep(2 + random.random())
+        # Sleep 1 seconds between job detail clicks wait
+        time.sleep(1 + random.random())
 
         # Extract text content of interest from lefthand job summary cards
         position = job.find('h2', class_='jobTitle').get_text()
