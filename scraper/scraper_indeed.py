@@ -4,18 +4,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from typing import Dict, List
 from bs4 import BeautifulSoup
-import logging
 from datetime import datetime
 import math
 import time
 import random
-from scraper.scraper_util import webdriver_wait_class, webdriver_screenshot, webdriver_write_data
-from scraper.scraper_fetch import webdriver_fetch_wait_class
+from scraper.scraper_fetch import webdriver_fetch_wait_class, webdriver_wait_class
+from util.util import webdriver_screenshot, append_json_data
 from handlers.exceptions_handlers import exceptions_handler
-
-# Setup logging config
-logging.basicConfig(level=logging.WARNING,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 # Parse search strings and options and to construct indeed url
@@ -46,8 +41,9 @@ def construct_indeed_url(search_position: str, search_location: str, search_opti
 
 # Navigates through indeed search pages and extracts job listing data
 def extract_indeed_pages(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None, total_page_num: int = 1) -> List[Dict[str, str]]:
-    # Initialize list containing json job data from page
+    # Initialize list containing json job data from page, and json filepath
     list_jobs_data = []
+    json_filepath = ""
 
     # Loop over and fetch each page of job lisitings
     for page in range(1, total_page_num+1):
@@ -81,8 +77,8 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
             f"Indeed: {search_position} in {search_location} page {str(page)} complete")
 
         # DEVONLY Write intermediate output json data file
-        webdriver_write_data(
-            data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}_pages_1_to_{page}")
+        json_filepath = append_json_data(
+            data=list_page_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}", filepath = json_filepath)
 
         # Sleep 20 seconds between page fetches
         if page != total_page_num:
@@ -158,10 +154,6 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             job_description = job_description.get_text(
                 separator='\n', strip=True)
 
-        # # Extract full job details
-        # job_full_description = soup.find(
-        #     'div', class_='jobsearch-JobComponent-description').get_text(separator='\n', strip=True)
-
         # Form json dictionary containing extracted job information
         job_dict = {
             'job_id': job_id,
@@ -174,7 +166,6 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             'detail': job_details,
             'description': job_description,
             'link': f"https://www.indeed.com{job_link}",
-            # 'job_details': job_full_description
         }
 
         # Push json dictionary into list
@@ -197,7 +188,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
 
     # DEVONLY Screenshot initial load
     webdriver_screenshot(driver=driver, filename='indeed_intial_load')
-
+    
     # Fetch initial HTML and parsed soup
     initial_html = driver.page_source
     initial_soup = BeautifulSoup(initial_html, 'html.parser')
@@ -207,13 +198,9 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
         'div', class_='jobsearch-JobCountAndSortPane-jobCount').get_text().split(' ')[0]
     total_page_num = math.ceil(int(job_count) / 15)
 
-    # Extracts job listings data on each page
-    list_jobs_data = extract_indeed_pages(driver=driver, search_position=search_position,
+    # Extracts job listings data on each page, and then writes/appends them to output json file
+    extract_indeed_pages(driver=driver, search_position=search_position,
                                           search_location=search_location, search_options=search_options, total_page_num=total_page_num)
-
-    # Write final output json data file
-    webdriver_write_data(
-        data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}")
 
     # Print to console that entire scrape is done
     print(f"Indeed: {search_position} in {search_location} scraped!")
