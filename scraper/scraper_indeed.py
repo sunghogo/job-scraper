@@ -188,9 +188,6 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     webdriver_fetch_wait_class(
         driver=driver, url=url, class_name='jobCard_mainContent', timeout=15, refetch_times=3)
 
-    # DEVONLY Screenshot initial load
-    webdriver_screenshot(driver=driver, filename='indeed_intial_load')
-
     # Fetch initial HTML and parsed soup
     initial_html = driver.page_source
     initial_soup = BeautifulSoup(initial_html, 'html.parser')
