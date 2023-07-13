@@ -1,7 +1,6 @@
 import logging
-from datetime import datetime
 from selenium.common.exceptions import TimeoutException
-
+from util.util import webdriver_screenshot
 
 # Declare outputs and errors directory paths
 outputs_path = "outputs"
@@ -31,9 +30,8 @@ def timeout_exceptions_handler(func):
         try:
             return func(*args, **kwargs)
         except TimeoutException:
-            # DEVONLY Save screenshot whenever timeout exception occurs
-            kwargs['driver'].save_screenshot(
-                f"{error_path}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_timeout_exception.png")
+            webdriver_screenshot(
+                driver=kwargs['driver'], filename='timeout_exception.png')
             raise TimeoutException(
                 f"Waiting for {kwargs['class_name']} at {kwargs['driver'].current_url} timed out after {kwargs['timeout']}s")
     return wrapper
