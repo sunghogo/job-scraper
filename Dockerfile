@@ -1,9 +1,9 @@
 # Command to build docker image
 # docker build -t job-scraper .
 # Command to run docker image for WINDOWS
-# docker run -v ${PWD}\outputs:/root/outputs -p 8080:8080 job-scraper
+# docker run -v ${PWD}\outputs:/app/outputs -p 8080:5000 job-scraper
 # Command to run docker image for LINUX/MACOS
-# docker run -v $(pwd)\outputs:/root/outputs -p 8080:8080 job-scraper
+# docker run -v $(pwd)\outputs:/app/outputs -p 8080:5000 job-scraper
 
 # Select Python distribtion
 FROM python:3.9
@@ -18,9 +18,9 @@ RUN apt-get install -y wget
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 
-# Set home/working directory
-ENV HOME /root
-WORKDIR /root
+# Set home/working directory to app
+ENV HOME /app
+WORKDIR /app
 
 # Copy over files
 COPY . .
@@ -28,8 +28,8 @@ COPY . .
 # Install python dependencies
 RUN pip3 install -r requirements.txt
 
-# Expose container port 8080 for local access
-EXPOSE 8080
+# Expose container port 5000 for local access
+EXPOSE 5000
 
 # Run app
 CMD ["python", "-u", "app.py"]
