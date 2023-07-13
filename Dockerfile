@@ -1,5 +1,6 @@
 # Command to build docker image
 # docker build -t job-scraper .
+
 # Command to run docker image for WINDOWS
 # docker run -v ${PWD}\outputs:/app/outputs -p 8080:5000 job-scraper
 # Command to run docker image for LINUX/MACOS
