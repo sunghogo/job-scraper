@@ -19,13 +19,22 @@ def webdriver_screenshot(driver: WebDriver, filename: str):
 
 
 # Write/appends output json in specified data directory, returns filepath name
-def write_json_data(data: List[Dict[str, str]], filename: str, filepath: str = ""):
+def write_json_data(data: List[Dict[str, str]], filename: str, filepath: str = "") -> str:
     if filepath == "":
         full_filename = f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{filename}.json"
         filepath = f"{data_path}/{full_filename}"
     with open(filepath, 'w') as file:
         json.dump(data, file, indent=4)
     return filepath
+
+
+# Opens output json file in specified data directory, returns the json data
+def read_json_data(filename: str, filepath: str = "") -> List[Dict[str, str]]:
+    if filepath == "":
+        full_filename = f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{filename}.json"
+        filepath = f"{data_path}/{full_filename}"
+    with open(filepath, 'r') as file:
+        json.load(file)
 
 
 # Writes/Appends to txt logs in specified directory
