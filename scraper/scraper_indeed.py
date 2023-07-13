@@ -57,14 +57,6 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         webdriver_fetch_wait_class(
             driver=driver, url=page_url, class_name='jobCard_mainContent', timeout=15, refetch_times=3)
 
-        # DEVONLY Screenshot initial load
-        webdriver_screenshot(
-            driver=driver, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}_page_{page}")
-
-        # DEVONLY Print url that is currently being scraped
-        print(
-            f"Scraping: {driver.current_url}")
-
         # Fetch page HTML and parsed soup
         page_html = driver.page_source
         page_soup = BeautifulSoup(page_html, 'html.parser')
@@ -72,10 +64,6 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         # Extract job listings from page, and add to jobs list
         list_page_jobs_data = extract_indeed_page(driver=driver)
         list_jobs_data = list_jobs_data + list_page_jobs_data
-
-        # DEVONLY Print to console that page scrape is done
-        print(
-            f"Indeed: {search_position} in {search_location} page {str(page)} complete")
 
         #  Write/appends page results to output json data file
         json_filepath = write_json_data(
@@ -200,6 +188,3 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     # Extracts job listings data on each page, and then writes/appends them to output json file
     extract_indeed_pages(driver=driver, search_position=search_position,
                          search_location=search_location, search_options=search_options, total_page_num=total_page_num)
-
-    # Print to console that entire scrape is done
-    print(f"Indeed: {search_position} in {search_location} scraped!")
