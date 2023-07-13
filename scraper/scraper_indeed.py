@@ -11,6 +11,7 @@ import random
 from scraper.scraper_fetch import webdriver_fetch_wait_class, webdriver_wait_class
 from util.util import webdriver_screenshot, write_json_data
 from handlers.exceptions_handlers import exceptions_handler
+from handlers.logs_handlers import logs_handler
 
 
 # Parse search strings and options and to construct indeed url
@@ -78,7 +79,7 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
 
         #  Write/appends page results to output json data file
         json_filepath = write_json_data(
-            data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}", filepath = json_filepath)
+            data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}", filepath=json_filepath)
 
         # Sleep 20 seconds between page fetches
         if page != total_page_num:
@@ -176,6 +177,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
 
 
 # Scrapes indeed with the specified job search query terms nad options
+@logs_handler(log_message=f"Scraping Indeed for", log_error_message="Scraping failed for")
 @exceptions_handler
 def scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None) -> List[Dict[str, str]]:
     # Construct initial indeed url
@@ -188,7 +190,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
 
     # DEVONLY Screenshot initial load
     webdriver_screenshot(driver=driver, filename='indeed_intial_load')
-    
+
     # Fetch initial HTML and parsed soup
     initial_html = driver.page_source
     initial_soup = BeautifulSoup(initial_html, 'html.parser')
@@ -200,7 +202,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
 
     # Extracts job listings data on each page, and then writes/appends them to output json file
     extract_indeed_pages(driver=driver, search_position=search_position,
-                                          search_location=search_location, search_options=search_options, total_page_num=total_page_num)
+                         search_location=search_location, search_options=search_options, total_page_num=total_page_num)
 
     # Print to console that entire scrape is done
     print(f"Indeed: {search_position} in {search_location} scraped!")
