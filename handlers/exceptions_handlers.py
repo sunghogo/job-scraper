@@ -2,13 +2,16 @@ import logging
 from datetime import datetime
 from selenium.common.exceptions import TimeoutException
 
+
 # Declare outputs and errors directory paths
 outputs_path = "outputs"
 error_path = f"{outputs_path}/errors"
 
+
 # Setup logging config
 logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 # Decorator that handles general exceptions by printing the message and then raising them
 def exceptions_handler(func):
@@ -17,6 +20,7 @@ def exceptions_handler(func):
             return func(*args, **kwargs)
         except Exception as e:
             logging.error(f"Exception occurred: {str(e)}", exc_info=False)
+            raise e
     return wrapper
 
 
@@ -30,5 +34,6 @@ def timeout_exceptions_handler(func):
             # DEVONLY Save screenshot whenever timeout exception occurs
             kwargs['driver'].save_screenshot(
                 f"{error_path}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_timeout_exception.png")
-            raise TimeoutException(f"Waiting for {kwargs['class_name']} at {kwargs['driver'].current_url} timed out after {kwargs['timeout']}s")
+            raise TimeoutException(
+                f"Waiting for {kwargs['class_name']} at {kwargs['driver'].current_url} timed out after {kwargs['timeout']}s")
     return wrapper
