@@ -11,7 +11,7 @@ import random
 from scraper.scraper_fetch import webdriver_fetch_wait_class, webdriver_wait_class
 from util.util import webdriver_screenshot, write_json_data
 from handlers.exceptions_handlers import exceptions_handler
-from handlers.logs_handlers import logs_handler
+from handlers.logs_handlers import logs_scraper_handler
 
 
 # Parse search strings and options and to construct indeed url
@@ -165,7 +165,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
 
 
 # Scrapes indeed with the specified job search query terms nad options
-@logs_handler(log_message=f"Scraping Indeed for", log_error_message="Scraping failed for")
+@logs_scraper_handler(log_message=f"Scraping Indeed for", log_error_message="Scraping failed for")
 @exceptions_handler
 def scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None) -> List[Dict[str, str]]:
     # Construct initial indeed url

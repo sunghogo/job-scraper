@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.WARNING,
 
 
 # Decorator that handles logging events into log files
-def logs_handler(log_message: str, log_error_message: str):
+def logs_scraper_handler(log_message: str, log_error_message: str):
     def decorator(func):
         def wrapper(*args, **kwargs):
             try:
