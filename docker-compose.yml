@@ -1,0 +1,50 @@
+# Command to build docker-compose
+# docker-compose build
+
+# Command to run docker-compose
+# docker-compose up
+
+# Command to build and run
+# docker-compose up --build
+
+version: "3.8"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:5000"
+    depends_on:
+      - db
+    volumes:
+      - outputs:/app/outputs
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_PASSWORD: example
+
+  pgadmin:
+    image: dpage/pgadmin4
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@example.com"
+      PGADMIN_DEFAULT_PASSWORD: "example"
+    ports:
+      - "5050:5050"
+      - "5444:5444"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  outputs:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${PWD}/outputs
