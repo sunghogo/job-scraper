@@ -2,6 +2,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from typing import Dict, List
 import json
 from datetime import datetime
+import os
 
 # Declare outputs directory paths
 outputs_path = "outputs"
@@ -31,10 +32,17 @@ def write_json_data(data: List[Dict[str, str]], filename: str, filepath: str = "
 # Opens output json file in specified data directory, returns the json data
 def read_json_data(filename: str, filepath: str = "") -> List[Dict[str, str]]:
     if filepath == "":
-        full_filename = f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{filename}.json"
-        filepath = f"{data_path}/{full_filename}"
+        filepath = f"{data_path}/{filename}"
     with open(filepath, 'r') as file:
         json.load(file)
+
+
+# Delete output json file in specified data directory
+def delete_json_data(filename: str, filepath: str = ""):
+    if filepath == "":
+        filepath = f"{data_path}/{filename}"
+    if os.path.exists(filepath):
+        os.remove(filepath)
 
 
 # Writes/Appends to txt logs in specified directory
