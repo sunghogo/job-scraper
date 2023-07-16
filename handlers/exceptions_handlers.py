@@ -31,7 +31,7 @@ def timeout_exceptions_handler(func):
             return func(*args, **kwargs)
         except TimeoutException:
             webdriver_screenshot(
-                driver=kwargs['driver'], filename='timeout_exception.png')
+                driver=kwargs['driver'], filename='timeout_exception')
             raise TimeoutException(
                 f"Waiting for {kwargs['class_name']} at {kwargs['driver'].current_url} timed out after {kwargs['timeout']}s")
     return wrapper
