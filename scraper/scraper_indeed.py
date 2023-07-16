@@ -26,7 +26,7 @@ def construct_indeed_url(search_position: str, search_location: str, search_opti
 
     if search_options != None:
         for key, value in search_options.items():
-            if key == 'experience_level':  # "ENTRY_LEVEL"
+            if key == 'experience_level' and value != "ALL":  # "ENTRY_LEVEL", "ALL"
                 url += f"&sc=0kf%3Aexplvl({value})%3B"
             elif key == "sort_date":
                 url += f"&sort=date"
