@@ -171,6 +171,14 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     # Construct initial indeed url
     url = construct_indeed_url(
         search_position, search_location, search_options)
+    
+    # Check if there are no results
+    try:
+        webdriver_fetch_wait_class(
+        driver=driver, url=url, class_name='jobsearch-NoResult-messageContainer', timeout=5)
+        return []
+    except:
+        pass
 
     # Fetches initial indeed page, waits for page load, and refetches if it timesout
     webdriver_fetch_wait_class(
@@ -186,5 +194,5 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     total_page_num = math.ceil(int(job_count) / 15)
 
     # Extracts job listings data on each page, and then writes/appends them to output json file
-    extract_indeed_pages(driver=driver, search_position=search_position,
+    return extract_indeed_pages(driver=driver, search_position=search_position,
                          search_location=search_location, search_options=search_options, total_page_num=total_page_num)
