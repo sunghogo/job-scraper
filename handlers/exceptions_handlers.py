@@ -38,7 +38,7 @@ def timeout_exceptions_handler(job_board: str):
                 return func(*args, **kwargs)
             except TimeoutException:
                 raise TimeoutException(
-                    f"Timed out waiting for {job_board} for {kwargs['search_position']} at {kwargs['search_location']}")
+                    f"Timed out waiting for {job_board} for {kwargs['search_position']} in {kwargs['search_location']} at {kwargs['driver'].current_url}")
         return wrapper
     return decorator
 
@@ -66,6 +66,6 @@ def no_results_exceptions_handler(job_board: str):
                 return func(*args, **kwargs)
             except NoResultsException:
                 raise NoResultsException(
-                    f"No results on {job_board} for {kwargs['search_position']} at {kwargs['search_location']}")
+                    f"No results on {job_board} for {kwargs['search_position']} in {kwargs['search_location']}")
         return wrapper
     return decorator
