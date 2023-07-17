@@ -12,6 +12,7 @@ logging.basicConfig(level=logging.WARNING,
 
 
 # Decorator that handles logging events into log files
+# Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None) 
 def logs_scraper_handler(log_message: str, log_error_message: str):
     def decorator(func):
         def wrapper(*args, **kwargs):
