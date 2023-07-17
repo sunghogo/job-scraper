@@ -10,7 +10,7 @@ import time
 import random
 from scraper.scraper_fetch import webdriver_fetch_wait_class, webdriver_wait_class
 from util.util import webdriver_screenshot, write_json_data
-from handlers.exceptions_handlers import exceptions_handler
+from handlers.exceptions_handlers import exceptions_handler, timeout_exceptions_screenshot_handler
 from handlers.logs_handlers import logs_scraper_handler
 
 
@@ -167,6 +167,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
 # Scrapes indeed with the specified job search query terms nad options
 @logs_scraper_handler(log_message=f"Scraping Indeed for", log_error_message="Scraping failed for")
 @exceptions_handler
+@timeout_exceptions_screenshot_handler
 def scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None) -> List[Dict[str, str]]:
     # Construct initial indeed url
     url = construct_indeed_url(
@@ -175,7 +176,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     # Check if there are no results
     try:
         webdriver_fetch_wait_class(
-        driver=driver, url=url, class_name='jobsearch-NoResult-messageContainer', timeout=5)
+        driver=driver, url=url, class_name='jobsearch-NoResult-messageContainer', timeout=10)
         return []
     except:
         pass
