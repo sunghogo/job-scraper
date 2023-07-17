@@ -8,13 +8,14 @@ from handlers.logs_handlers import logs_scraper_handler
 from scraper.construct_url import construct_indeed_url
 from scraper.extract_indeed import extract_indeed_pages
 
+job_board = "Indeed"
 
 # Scrapes indeed with the specified job search query terms nad options
-@logs_scraper_handler(log_message = f"Scraping Indeed for", log_error_message = "Scraping failed for")
+@logs_scraper_handler(job_board = job_board)
 @exceptions_handler
-@timeout_exceptions_screenshot_handler(job_board = "Indeed")
-@timeout_exceptions_handler(job_board = "Indeed")
-@no_results_exceptions_handler(job_board = "Indeed")
+@timeout_exceptions_screenshot_handler(job_board = job_board)
+@timeout_exceptions_handler(job_board = job_board)
+@no_results_exceptions_handler(job_board = job_board)
 def scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None) -> List[Dict[str, str]]:
     # Construct initial indeed url
     initial_url = construct_indeed_url(
