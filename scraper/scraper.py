@@ -1,7 +1,7 @@
 from scraper.scraper_indeed import scrape_indeed
 from util.webdriver_init import init_webdriver
 
-def scrape_search(search_position: str, search_location: str, experience_level: str = "ALL"):
+def scrape(search_position: str, search_location: str, experience_level: str = "ALL"):
     # Initialize webdriver instance
     driver = init_webdriver()
 
