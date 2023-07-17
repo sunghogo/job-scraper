@@ -1,6 +1,6 @@
 import logging
 from selenium.common.exceptions import TimeoutException
-from util.util import webdriver_screenshot
+from util.util import screenshot
 
 # Declare outputs and errors directory paths
 outputs_path = "outputs"
@@ -28,8 +28,8 @@ def exceptions_handler(func):
     return wrapper
 
 
-# Decorator that handles timeout exceptions by printing the message and then raising them
-# Based on arguments passed to scraper_util.py: webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str)
+# Decorator that handles timeout exceptions by forming the message and then raising them
+# Based on arguments passed to util.py: webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str)
 def timeout_exceptions_handler(func):
     def wrapper(*args, **kwargs):
         try:
@@ -41,13 +41,27 @@ def timeout_exceptions_handler(func):
 
 
 # Decorator that handles screenshotting from webdriver upon timeout exception, and then raising the exception upwards
-# Based on arguments passed to scraper_util.py: webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0)
+# Based on arguments passed to util.py: webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0)
 def timeout_exceptions_screenshot_handler(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except TimeoutException as e:
-            webdriver_screenshot(
+            screenshot(
     driver=kwargs['driver'], filename='timeout_exception')
             raise e
     return wrapper
+
+
+# Decorator that handles no result exceptions by forming the message and then raising them
+# Based on arguments passed to util.py: webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str)
+def no_results_exceptions_handler(job_board: str):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except NoResultsException:
+                raise NoResultsException(
+                    f"No results on {job_board} for {kwargs['search_position']} at {kwargs['search_location']}")
+        return wrapper
+    return decorator
