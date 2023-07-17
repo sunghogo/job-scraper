@@ -1,6 +1,6 @@
 import logging
 from selenium.common.exceptions import TimeoutException
-from util.util import screenshot
+from util.webdriver_util import screenshot
 
 # Declare outputs and errors directory paths
 outputs_path = "outputs"

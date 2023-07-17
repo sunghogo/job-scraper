@@ -1,6 +1,6 @@
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.common.exceptions import TimeoutException
-from util.util import fetch_wait_class
+from util.webdriver_util import fetch_wait_class
 from handlers.exceptions_handlers import NoResultsException
 
 # Fetches indeed, and raises a no results exception if there are no results, or a timeout exxception if the jobs do not load correctly
