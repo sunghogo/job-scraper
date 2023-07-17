@@ -31,28 +31,31 @@ def exceptions_handler(func):
 
 # Decorator that handles timeout exceptions by forming the message and then raising them
 # Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None))
-def timeout_exceptions_handler(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except TimeoutException:
-            raise TimeoutException(
-                f"Waiting for {kwargs['class_name']} at {kwargs['driver'].current_url} timed out after {kwargs['timeout']}s")
-    return wrapper
+def timeout_exceptions_handler(job_board: str):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except TimeoutException:
+                raise TimeoutException(
+                    f"Timed out waiting for {job_board} for {kwargs['search_position']} at {kwargs['search_location']}")
+        return wrapper
+    return decorator
 
 
 # Decorator that handles screenshotting from webdriver upon timeout exception, and then raising the exception upwards
 # Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None))
-def timeout_exceptions_screenshot_handler(func):
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except TimeoutException as e:
-            screenshot(
-    driver=kwargs['driver'], filename='timeout_exception')
-            raise e
-    return wrapper
-
+def timeout_exceptions_screenshot_handler(job_board: str):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except TimeoutException as e:
+                screenshot(
+        driver=kwargs['driver'], filename=f"{job_board}_{kwargs['search_position']}_{kwargs['search_location']}_timeout_exception")
+                raise e
+        return wrapper
+    return decorator
 
 # Decorator that handles no result exceptions by forming the message and then raising them
 # Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None))
