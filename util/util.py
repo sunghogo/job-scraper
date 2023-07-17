@@ -19,8 +19,7 @@ logs_path = f"{outputs_path}/logs"
 
 
 # Make webdriver wait until class loads, otherwise raise Timeout Exception
-@timeout_exceptions_handler
-def webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str):
+def wait_class(driver: WebDriver, timeout: int, class_name: str):
     # Increase timeout by a random number
     timeout += random.random()
     WebDriverWait(driver, timeout=timeout).until(
@@ -28,7 +27,7 @@ def webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str):
     
 
 # Fetches url, wait until class loads, and refetches specified number of times after specified timeout
-def webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0):
+def fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0):
     # Fetch url
     driver.get(url)
     
@@ -37,7 +36,7 @@ def webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, time
     # Otherwise, after specified refetch_times, grab the most recent exception and raise it
     for i in range(refetch_times):
         try:
-            webdriver_wait_class(driver = driver, timeout=timeout, class_name = class_name)
+            wait_class(driver = driver, timeout=timeout, class_name = class_name)
             return
         except TimeoutException as e:
             exception = e
@@ -49,7 +48,7 @@ def webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, time
 
 # Saves screenshots in specified screenshots directory
 # webdriver.set_window_size() crashes the page
-def webdriver_screenshot(driver: WebDriver, filename: str):
+def screenshot(driver: WebDriver, filename: str):
     filepath = f"{screenshots_path}/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{filename}.png"
     driver.save_screenshot(filepath)
 
