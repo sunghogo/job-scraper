@@ -1,4 +1,4 @@
-from scraper.scraper_indeed import scrape_indeed
+from scraper.scrape_indeed import scrape_indeed
 from util.webdriver_init import init_webdriver
 
 def scrape(search_position: str, search_location: str, experience_level: str = "ALL"):
