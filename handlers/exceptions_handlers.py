@@ -12,6 +12,11 @@ logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 
+# Custom Exception Classes
+class NoResultsException(Exception):
+    pass
+
+
 # Decorator that handles general exceptions by printing the message and then raising them
 def exceptions_handler(func):
     def wrapper(*args, **kwargs):
