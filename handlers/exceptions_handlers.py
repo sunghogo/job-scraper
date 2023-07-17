@@ -36,7 +36,7 @@ def timeout_exceptions_handler(func):
 
 
 # Decorator that handles screenshotting from webdriver upon timeout exception, and then raising the exception upwards
-# Based on arguments passed to scraper_util.py: webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str)
+# Based on arguments passed to scraper_util.py: webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0)
 def timeout_exceptions_screenshot_handler(func):
     def wrapper(*args, **kwargs):
         try:
