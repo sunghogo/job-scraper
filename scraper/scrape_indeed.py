@@ -2,8 +2,8 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from bs4 import BeautifulSoup
 from typing import Dict, List
 import math
-from scraper.scraper_fetch import fetch_indeed
-from handlers.exceptions_handlers import exceptions_handler, timeout_exceptions_screenshot_handler, no_results_exceptions_handler
+from scraper.fetch import fetch_indeed
+from handlers.exceptions_handlers import exceptions_handler, timeout_exceptions_handler, timeout_exceptions_screenshot_handler, no_results_exceptions_handler
 from handlers.logs_handlers import logs_scraper_handler
 from scraper.construct_url import construct_indeed_url
 from scraper.extract_indeed import extract_indeed_pages
@@ -13,6 +13,7 @@ from scraper.extract_indeed import extract_indeed_pages
 @logs_scraper_handler(log_message = f"Scraping Indeed for", log_error_message = "Scraping failed for")
 @exceptions_handler
 @timeout_exceptions_screenshot_handler
+@timeout_exceptions_handler
 @no_results_exceptions_handler(job_board = "Indeed")
 def scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None) -> List[Dict[str, str]]:
     # Construct initial indeed url
