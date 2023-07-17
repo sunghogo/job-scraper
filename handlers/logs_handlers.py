@@ -1,8 +1,9 @@
 import logging
-from datetime import datetime
 from selenium.common.exceptions import TimeoutException
 from util.util import append_log
+from handlers.exceptions_handlers import NoResultsException
 
+# Initialize log filenames
 log_filename = 'task_logs'
 error_log_filename = 'error_logs'
 
@@ -13,19 +14,24 @@ logging.basicConfig(level=logging.WARNING,
 
 # Decorator that handles logging events into log files
 # Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None) 
-def logs_scraper_handler(log_message: str, log_error_message: str):
+def logs_scraper_handler(job_board: str):
     def decorator(func):
         def wrapper(*args, **kwargs):
+            log_message = f"Scraping {job_board} for {kwargs['search_position']} in {kwargs['search_location']}"
             try:
-                complete_log_message = f"{log_message} {kwargs['search_position']} in {kwargs['search_location']}"
                 append_log(
-                    data=complete_log_message, log_type='log', filename=log_filename)
+                    data=log_message, log_type='log', filename=log_filename)
                 ret_val = func(*args, **kwargs)
                 append_log(
-                    data=f"{complete_log_message} finished", log_type='log', filename=log_filename)
+                    data=f"{log_message} finished", log_type='log', filename=log_filename)
                 return ret_val
-            except Exception as e:
-                append_log(data=f"{log_error_message} {kwargs['search_position']} in {kwargs['search_location']}",
+            except TimeoutException as e:
+                append_log(data=f"{log_message} failed",
+                           log_type='log', filename=log_filename)
+                append_log(data=str(e),
+                           log_type='error', filename=error_log_filename)
+            except NoResultsException as e:
+                append_log(data=f"No results on {job_board} for {kwargs['search_position']} in {kwargs['search_location']}",
                            log_type='log', filename=log_filename)
                 append_log(data=str(e),
                            log_type='error', filename=error_log_filename)
