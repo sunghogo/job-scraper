@@ -6,7 +6,7 @@ from typing import Dict, List
 from datetime import datetime
 import time
 import random
-from scraper.scraper_fetch import fetch_indeed
+from scraper.fetch import fetch_indeed
 from util.util import write_json_data
 from util.webdriver_util import wait_class
 from scraper.construct_url import construct_indeed_url
@@ -19,15 +19,15 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
 
     # Loop over and fetch each page of job lisitings
     for page in range(1, total_page_num+1):
-        # Construct search page indeed url
+        # Update search options with page num and construct search page indeed url
         search_options["page"] = str(page)
         page_url = construct_indeed_url(
             search_position, search_location, search_options)
 
-        # Fetches each job page, waits for page load, and refetches if it timesout
+        # Fetch new job page
         fetch_indeed(driver = driver, url = page_url)
 
-        # Fetch page HTML and parsed soup
+        # Extract page HTML and parsed soup
         extracted_page_html = driver.page_source
         parsed_page_html = BeautifulSoup(extracted_page_html, 'html.parser')
 
@@ -56,7 +56,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
     # Initialize list containing json job data from page
     list_page_job_data = []
 
-    # Fetch page HTML and parsed soup
+    # Extract page HTML and parsed soup
     extracted_page_html = driver.page_source
     parsed_page_html = BeautifulSoup(extracted_page_html, 'html.parser')
 
