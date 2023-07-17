@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import random
-from handlers.exceptions_handlers import timeout_exceptions_handler
+from handlers.exceptions_handlers import timeout_exceptions_handler, timeout_exceptions_screenshot_handler
 
 # Make webdriver wait until class loads, otherwise raise Timeout Exception
 @timeout_exceptions_handler
@@ -16,6 +16,7 @@ def webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str):
     
 
 # Fetches url, wait until class loads, and refetches specified number of times after specified timeout
+@timeout_exceptions_screenshot_handler
 def webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0):
     # Fetch url
     driver.get(url)
