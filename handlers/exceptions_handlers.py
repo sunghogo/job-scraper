@@ -14,7 +14,8 @@ logging.basicConfig(level=logging.WARNING,
 
 # Custom Exception Classes
 class NoResultsException(Exception):
-    pass
+    def __init__(self, message="NoResultsException: No results found"):
+        super().__init__(message)
 
 
 # Decorator that handles general exceptions by printing the message and then raising them
@@ -29,7 +30,7 @@ def exceptions_handler(func):
 
 
 # Decorator that handles timeout exceptions by forming the message and then raising them
-# Based on arguments passed to util.py: webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str)
+# Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None))
 def timeout_exceptions_handler(func):
     def wrapper(*args, **kwargs):
         try:
@@ -41,7 +42,7 @@ def timeout_exceptions_handler(func):
 
 
 # Decorator that handles screenshotting from webdriver upon timeout exception, and then raising the exception upwards
-# Based on arguments passed to util.py: webdriver_fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0)
+# Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None))
 def timeout_exceptions_screenshot_handler(func):
     def wrapper(*args, **kwargs):
         try:
@@ -54,7 +55,7 @@ def timeout_exceptions_screenshot_handler(func):
 
 
 # Decorator that handles no result exceptions by forming the message and then raising them
-# Based on arguments passed to util.py: webdriver_wait_class(driver: WebDriver, timeout: int, class_name: str)
+# Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None))
 def no_results_exceptions_handler(job_board: str):
     def decorator(func):
         def wrapper(*args, **kwargs):
