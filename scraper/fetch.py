@@ -17,4 +17,4 @@ def fetch_indeed(driver: WebDriver, url: str, initial_fetch: bool = False):
             pass
     
     fetch_wait_class(
-        driver=driver, url=url, class_name='jobCard_mainContent', timeout=15, refetch_times=2)
+        driver=driver, url=url, class_name='jobCard_mainContent', timeout=15, fetch_times=2)
