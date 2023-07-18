@@ -16,10 +16,10 @@ def wait_class(driver: WebDriver, timeout: int, class_name: str):
 
 # Makes webdriver fetch url, wait until class loads, and refetches specified number of times 
 # If timing out all the refetches, raises most recent timeout exception
-def fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, refetch_times: int = 0):
+def fetch_wait_class(driver: WebDriver, url:str, class_name: str, timeout: int, fetch_times: int = 1):
     driver.get(url)
     timeout_exception = TimeoutException()
-    for i in range(refetch_times):
+    for i in range(fetch_times):
         try:
             wait_class(driver = driver, timeout=timeout, class_name = class_name)
             return
