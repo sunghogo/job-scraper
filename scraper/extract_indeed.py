@@ -11,6 +11,7 @@ from util.util import write_json_data
 from util.webdriver_util import wait_class
 from scraper.construct_url import construct_indeed_url
 
+
 # Navigates through indeed search pages and extracts job listing data
 def extract_indeed_pages(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None, total_page_num: int = 1) -> List[Dict[str, str]]:
     # Initialize list containing json job data from page, and json filepath
@@ -25,7 +26,7 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
             search_position, search_location, search_options)
 
         # Fetch new job page
-        fetch_indeed(driver = driver, url = page_url)
+        fetch_indeed(driver=driver, url=page_url)
 
         # Extract page HTML and parsed soup
         extracted_page_html = driver.page_source
@@ -39,9 +40,9 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         json_filepath = write_json_data(
             data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}", filepath=json_filepath)
 
-        # Sleep 20 seconds between page fetches
+        # Sleep 30 seconds between page fetches
         if page != total_page_num:
-            time.sleep(20 + random.random())
+            time.sleep(30 + random.random())
 
         # If there are no next page url due to indeed cutting off search results, end search early
         if parsed_page_html.find('a', {'data-testid': 'pagination-page-next'}) is None:
@@ -108,7 +109,8 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
                 separator='\n', strip=True)
 
         # Extract righthand job description
-        job_description = reparsed_html.find('div', {"id": "jobDescriptionText"})
+        job_description = reparsed_html.find(
+            'div', {"id": "jobDescriptionText"})
         if job_description is not None:
             job_description = job_description.get_text(
                 separator='\n', strip=True)
