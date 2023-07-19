@@ -25,13 +25,13 @@ def logs_scraper_handler(job_board: str):
                 append_log(
                     data=f"{log_message} finished", log_type='log', filename=log_filename)
                 return ret_val
-            except TimeoutException as e:
-                append_log(data=f"{log_message} failed",
+            except NoResultsException as e:
+                append_log(data=f"No results on {job_board} for {kwargs['search_position']} in {kwargs['search_location']}",
                            log_type='log', filename=log_filename)
                 append_log(data=str(e),
                            log_type='error', filename=error_log_filename)
-            except NoResultsException as e:
-                append_log(data=f"No results on {job_board} for {kwargs['search_position']} in {kwargs['search_location']}",
+            except Exception as e:
+                append_log(data=f"{log_message} failed",
                            log_type='log', filename=log_filename)
                 append_log(data=str(e),
                            log_type='error', filename=error_log_filename)
