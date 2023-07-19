@@ -27,15 +27,14 @@ services:
       PGADMIN_DEFAULT_EMAIL: "admin@example.com"
       PGADMIN_DEFAULT_PASSWORD: "example"
     ports:
-      - "5050:5050"
-      - "5444:5444"
+      - "5050:80"
     depends_on:
       - db
 
   app:
     build: .
     environment:
-      WAIT_HOSTS: db:5432, pgadmin:5050, pgadmin:5444
+      WAIT_HOSTS: db:5432, pgadmin:80
     ports:
       - "8080:5000"
     depends_on:
