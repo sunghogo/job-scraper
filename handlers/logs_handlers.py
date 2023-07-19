@@ -4,8 +4,8 @@ from util.util import append_log
 from handlers.exceptions_handlers import NoResultsException
 
 # Initialize log filenames
-log_filename = 'task_logs'
-error_log_filename = 'error_logs'
+log_filename = 'task'
+error_log_filename = 'error'
 
 # Setup logging config
 logging.basicConfig(level=logging.WARNING,
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.WARNING,
 
 
 # Decorator that handles logging events into log files
-# Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None) 
+# Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None)
 def logs_scraper_handler(job_board: str):
     def decorator(func):
         def wrapper(*args, **kwargs):
