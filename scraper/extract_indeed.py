@@ -92,10 +92,10 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
 
         # Extract text content for metadata bubble
         salary = job.find('div', class_='salary-snippet-container')
-        if salary != None:
+        if salary is not None:
             salary = salary.get_text()
         estimated_salary = job.find('div', class_='estimated-salary-container')
-        if estimated_salary != None:
+        if estimated_salary is not None:
             estimated_salary = estimated_salary.get_text()
 
         # Re-extract and parse html after righthand job details body description loads
