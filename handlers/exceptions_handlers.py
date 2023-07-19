@@ -58,10 +58,9 @@ def screenshot_exceptions_handler(job_board: str):
         return wrapper
     return decorator
 
+
 # Decorator that handles no result exceptions by forming the message and then raising them
 # Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None))
-
-
 def no_results_exceptions_handler(job_board: str):
     def decorator(func):
         def wrapper(*args, **kwargs):
