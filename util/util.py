@@ -25,7 +25,7 @@ def write_json_data(data: List[Dict[str, str]], filename: str, filepath: str = "
 # Opens json file in outputs data directory, returns the json data
 def read_json_data(filename: str, filepath: str = "") -> List[Dict[str, str]]:
     if filepath == "":
-        filepath = f"{data_path}/{filename}"
+        filepath = f"{data_path}/{filename}.json"
     with open(filepath, 'r') as file:
         return json.load(file)
 
@@ -33,7 +33,7 @@ def read_json_data(filename: str, filepath: str = "") -> List[Dict[str, str]]:
 # Delete json file in outputs data directory
 def delete_json_data(filename: str, filepath: str = ""):
     if filepath == "":
-        filepath = f"{data_path}/{filename}"
+        filepath = f"{data_path}/{filename}.json"
     if os.path.exists(filepath):
         os.remove(filepath)
 
