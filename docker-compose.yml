@@ -10,21 +10,14 @@
 version: "3.8"
 
 services:
-  web:
-    build: .
-    ports:
-      - "8080:5000"
-    depends_on:
-      - db
-    volumes:
-      - outputs:/app/outputs
-
   db:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
       POSTGRES_PASSWORD: example
+    ports:
+      - "5432:5432"
 
   pgadmin:
     image: dpage/pgadmin4
@@ -38,6 +31,17 @@ services:
       - "5444:5444"
     depends_on:
       - db
+
+  app:
+    build: .
+    environment:
+      WAIT_HOSTS: db:5432, pgadmin:5050, pgadmin:5444
+    ports:
+      - "8080:5000"
+    depends_on:
+      - db
+    volumes:
+      - outputs:/app/outputs
 
 volumes:
   postgres_data:
