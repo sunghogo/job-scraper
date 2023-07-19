@@ -32,5 +32,9 @@ RUN pip3 install -r requirements.txt
 # Expose container port 5000 for local access
 EXPOSE 5000
 
+# Add docker-compose-wait dependency to wait for dockerized database
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.11.0/wait /wait
+RUN chmod +x /wait
+
 # Run app
-CMD ["python", "-u", "app.py"]
+CMD /wait && ["python", "-u", "app.py"]
