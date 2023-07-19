@@ -43,22 +43,25 @@ def timeout_exceptions_handler(job_board: str):
     return decorator
 
 
-# Decorator that handles screenshotting from webdriver upon timeout exception, and then raising the exception upwards
+# Decorator that handles screenshotting from webdriver upon exception, and then raising the exception upwards
 # Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None))
-def timeout_exceptions_screenshot_handler(job_board: str):
+def screenshot_exceptions_handler(job_board: str):
     def decorator(func):
         def wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
-            except TimeoutException as e:
-                screenshot(
-        driver=kwargs['driver'], filename=f"{job_board}_{kwargs['search_position']}_{kwargs['search_location']}_timeout_exception")
-                raise e
+            except Exception as e:
+                if type(e) is not NoResultsException:
+                    screenshot(
+                        driver=kwargs['driver'], filename=f"{job_board}_{kwargs['search_position']}_{kwargs['search_location']}_{type(e)}_exception")
+                    raise e
         return wrapper
     return decorator
 
 # Decorator that handles no result exceptions by forming the message and then raising them
 # Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None))
+
+
 def no_results_exceptions_handler(job_board: str):
     def decorator(func):
         def wrapper(*args, **kwargs):
