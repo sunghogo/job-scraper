@@ -7,6 +7,9 @@
 # Command to build and run
 # docker-compose up --build
 
+# The following warning message will be seen on Windows OS, and is fine:
+# level=warning msg="The \"PWD\" variable is not set. Defaulting to a blank string."
+
 version: "3.8"
 
 services:
