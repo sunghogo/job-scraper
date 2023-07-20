@@ -7,7 +7,7 @@ from handlers.exceptions_handlers import logging_exceptions_handler
 from handlers.logs_handlers import log_scraper_queue_handler
 
 
-class scraper(threading.Thread):
+class Scraper(threading.Thread):
     def __init__(self):
         super().__init__()
         self.queue = Queue()
