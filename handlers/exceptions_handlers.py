@@ -19,7 +19,7 @@ class NoResultsException(Exception):
 
 
 # Decorator that handles general exceptions by printing the message and then raising them
-def exceptions_handler(func):
+def logging_exceptions_handler(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
