@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.WARNING,
 
 # Decorator that handles logging events into log files
 # Based on arguments passed to scrape_indeed(driver: WebDriver, search_position: str, search_location: str, search_options: Dict[str, str] = None)
-def logs_scraper_handler(job_board: str):
+def log_scrapes_handler(job_board: str):
     def decorator(func):
         def wrapper(*args, **kwargs):
             log_message = f"Scraping {job_board} for {kwargs['search_position']} in {kwargs['search_location']}"

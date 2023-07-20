@@ -4,7 +4,7 @@ from typing import Dict, List
 import math
 from scraper.fetch import fetch_indeed
 from handlers.exceptions_handlers import logging_exceptions_handler, timeout_exceptions_handler, screenshot_exceptions_handler, no_results_exceptions_handler
-from handlers.logs_handlers import logs_scraper_handler
+from handlers.logs_handlers import log_scrapes_handler
 from scraper.construct_url import construct_indeed_url
 from scraper.extract_indeed import extract_indeed_pages
 
@@ -12,7 +12,7 @@ job_board = "Indeed"
 
 
 # Scrapes indeed with the specified job search query terms nad options
-@logs_scraper_handler(job_board=job_board)
+@log_scrapes_handler(job_board=job_board)
 @logging_exceptions_handler
 @screenshot_exceptions_handler(job_board=job_board)
 @timeout_exceptions_handler(job_board=job_board)
