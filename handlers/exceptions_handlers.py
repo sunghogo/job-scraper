@@ -51,10 +51,10 @@ def screenshot_exceptions_handler(job_board: str):
             try:
                 return func(*args, **kwargs)
             except Exception as e:
-                if type(e) is not NoResultsException:
+                if not isinstance(e, NoResultsException):
                     screenshot(
                         driver=kwargs['driver'], filename=f"{job_board}_{kwargs['search_position']}_{kwargs['search_location']}_{type(e)}_exception")
-                    raise e
+                raise e
         return wrapper
     return decorator
 
