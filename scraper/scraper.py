@@ -23,12 +23,13 @@ class Scraper(threading.Thread):
 
     # Starts thread
     def run(self):
+        time.sleep(1)
         while not self.stop_event.is_set():
             if not self.queue.empty():
                 try:
                     self.queue.get()()
-                except Exception as e:
-                    print(f"Error executing function {func.__name__}: {e}")
+                except Exception:
+                    pass
                 finally:
                     self.queue.task_done()
 
