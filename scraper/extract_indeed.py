@@ -40,9 +40,9 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         json_filepath = write_json_data(
             data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}", filepath=json_filepath)
 
-        # Sleep 30 seconds between page fetches
+        # Sleep 20 seconds between page fetches
         if page != total_page_num:
-            time.sleep(30 + random.random())
+            time.sleep(20 + random.random())
 
         # If there are no next page url due to indeed cutting off search results, end search early
         if parsed_page_html.find('a', {'data-testid': 'pagination-page-next'}) is None:
@@ -83,7 +83,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             return
 
         # Sleep 1 seconds between job detail clicks wait
-        time.sleep(1.5 + random.random() + random.random())
+        time.sleep(1 + random.random() + random.random())
 
         # Extract text content of interest from lefthand job summary cards
         position = job.find('h2', class_='jobTitle').get_text()
