@@ -4,11 +4,11 @@
 import unittest
 import pytest
 from scraper.scraper import Scraper
+import logging
 
 class TestScraperMethods(unittest.TestCase):
-    # Initialize Scraper module
-    def setUp(self):
-        self.scraper = Scraper()
+    # # Initialize Scraper module
+    scraper = Scraper()
     
     # Test whether scraper module was properly initialiszed
     def test_scraper_init(self):
@@ -29,9 +29,14 @@ class TestScraperMethods(unittest.TestCase):
     def test_add_scrape(self):
         self.scraper.stop()
         self.scraper.add_scrape(search_position="Software Engineer",
-           search_location="United States", experience_level="ENTRY_LEVEL")
+           search_location="New York", experience_level="ENTRY_LEVEL")
         self.assertFalse(self.scraper.queue.empty())
 
+    # Test whether getting and executing scrape calls from the queue works
+    def test_execute_scrape(self):
+        self.scraper.execute_scrape()
+        self.scraper.queue.task_done()
+        self.assertTrue(self.scraper.queue.empty())
 
 if __name__ == '__main__':
     unittest.main()
