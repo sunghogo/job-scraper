@@ -39,13 +39,14 @@ class Scraper(threading.Thread):
     @log_scraper_queue_handler
     @logging_exceptions_handler
     def add_scrape(self, search_position: str, search_location: str, experience_level: str = "ALL"):
-        self.queue.put(scrape, {search_position: search_position, search_location: search_location, experience_level: experience_level})
+        self.queue.put((scrape, [], {"search_position": search_position, "search_location": search_location, "experience_level": experience_level}))
     
     # Retrieves and executes scrape call from the queue
     @log_scraper_queue_handler
     @logging_exceptions_handler
     def execute_scrape(self):
-        self.queue.get()()
+        func, args, kwargs = self.queue.get()
+        func(*args, **kwargs)
 
 
 # Scrapes search on job boards
