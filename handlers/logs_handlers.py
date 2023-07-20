@@ -37,3 +37,14 @@ def logs_scraper_handler(job_board: str):
                            log_type='error', filename=error_log_filename)
         return wrapper
     return decorator
+
+
+# Decorator that handles logging scraper queue events into error log files
+def logs_scraper_queue_handler(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            append_log(data=f"Error calling {func.__name__}: {str(e)}",
+                        log_type='error', filename=error_log_filename)
+    return wrapper
