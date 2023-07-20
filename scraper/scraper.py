@@ -26,12 +26,8 @@ class Scraper(threading.Thread):
         time.sleep(1)
         while not self.stop_event.is_set():
             if not self.queue.empty():
-                try:
-                    self.execute_scrape()
-                except Exception:
-                    pass
-                finally:
-                    self.queue.task_done()
+                self.execute_scrape()
+                self.queue.task_done()
 
     @log_scraper_queue_handler
     @logging_exceptions_handler
