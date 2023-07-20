@@ -24,7 +24,7 @@ def exceptions_handler(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            logging.error(f"Exception occurred: {str(e)}", exc_info=False)
+            logging.error(f"Exception occurred calling {func.__name__}: {str(e)}", exc_info=False)
             raise e
     return wrapper
 
