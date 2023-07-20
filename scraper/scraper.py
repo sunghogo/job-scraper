@@ -6,8 +6,9 @@ from util.webdriver_init import init_webdriver
 from handlers.exceptions_handlers import logging_exceptions_handler
 from handlers.logs_handlers import log_scraper_queue_handler
 
-
+# Scraper module that continuously runs on a thread, and executes scrapes in its queue
 class Scraper(threading.Thread):
+    # Initialize Thread superclass, queue, events, and starts upon initialization
     def __init__(self):
         super().__init__()
         self.queue = Queue()
@@ -17,23 +18,30 @@ class Scraper(threading.Thread):
         self.stop_event = threading.Event()
         self.start()
     
-    # Stop thread
+    # Stops thread
     def stop(self):
         self.stop_event.set()
+        
+    # Continues thread
+    def resume(self):
+        self.stop_event.clear()
 
-    # Starts thread
+    # Thread run loop
     def run(self):
         time.sleep(1)
         while not self.stop_event.is_set():
             if not self.queue.empty():
                 self.execute_scrape()
+                # Signals to queue that task was finished
                 self.queue.task_done()
 
+    # Add scrape call to the queue
     @log_scraper_queue_handler
     @logging_exceptions_handler
     def add_scrape(self, search_position: str, search_location: str, experience_level: str = "ALL"):
         self.queue.put(scrape, {search_position: search_position, search_location: search_location, experience_level: experience_level})
     
+    # Retrieves and executes scrape call from the queue
     @log_scraper_queue_handler
     @logging_exceptions_handler
     def execute_scrape(self):
