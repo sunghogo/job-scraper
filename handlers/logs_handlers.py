@@ -40,7 +40,7 @@ def log_scrapes_handler(job_board: str):
 
 
 # Decorator that handles logging scraper queue events into error log files
-def logs_scraper_queue_handler(func):
+def log_scraper_queue_handler(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)

@@ -4,7 +4,7 @@ import time
 from scraper.scrape_indeed import scrape_indeed
 from util.webdriver_init import init_webdriver
 from handlers.exceptions_handlers import logging_exceptions_handler
-from handlers.logs_handlers import logs_scraper_queue_handler
+from handlers.logs_handlers import log_scraper_queue_handler
 
 
 class scraper(threading.Thread):
@@ -35,7 +35,7 @@ class scraper(threading.Thread):
     def add_scrape(self, search_position: str, search_location: str, experience_level: str = "ALL"):
         self.queue.put(scrape, {search_position: search_position, search_location: search_location, experience_level: experience_level})
     
-    @logs_scraper_queue_handler
+    @log_scraper_queue_handler
     @logging_exceptions_handler
     def call_scrape(self):
         self.queue.get()()
