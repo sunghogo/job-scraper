@@ -18,13 +18,9 @@ class Scraper(threading.Thread):
         self.stop_event = threading.Event()
         self.start()
     
-    # Stops thread
+    # Stops thread. This method will lead the thread to PERMANENTLY FINISH EXECUTING, and can only be restarted with a NEW INSTANCE of the class
     def stop(self):
         self.stop_event.set()
-        
-    # Continues thread
-    def resume(self):
-        self.stop_event.clear()
 
     # Thread run loop
     def run(self):
