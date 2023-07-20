@@ -27,18 +27,20 @@ class Scraper(threading.Thread):
         while not self.stop_event.is_set():
             if not self.queue.empty():
                 try:
-                    self.queue.get()()
+                    self.execute_scrape()
                 except Exception:
                     pass
                 finally:
                     self.queue.task_done()
 
+    @log_scraper_queue_handler
+    @logging_exceptions_handler
     def add_scrape(self, search_position: str, search_location: str, experience_level: str = "ALL"):
         self.queue.put(scrape, {search_position: search_position, search_location: search_location, experience_level: experience_level})
     
     @log_scraper_queue_handler
     @logging_exceptions_handler
-    def call_scrape(self):
+    def execute_scrape(self):
         self.queue.get()()
 
 
