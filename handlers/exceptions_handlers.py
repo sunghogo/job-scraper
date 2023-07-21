@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.WARNING,
 
 # Custom Exception Classes
 class NoResultsException(Exception):
-    def __init__(self, message="NoResultsException: No results found"):
+    def __init__(self, message = "NoResultsException: No results found"):
         super().__init__(message)
 
 
@@ -51,9 +51,8 @@ def screenshot_exceptions_handler(job_board: str):
             try:
                 return func(*args, **kwargs)
             except Exception as e:
-                if not isinstance(e, NoResultsException):
-                    screenshot(
-                        driver=kwargs['driver'], filename=f"{job_board}_{kwargs['search_position']}_{kwargs['search_location']}_{type(e)}_exception")
+                screenshot(
+                    driver=kwargs['driver'], filename=f"{job_board}_{kwargs['search_position']}_{kwargs['search_location']}_exception")
                 raise e
         return wrapper
     return decorator
