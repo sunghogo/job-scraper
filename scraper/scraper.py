@@ -24,8 +24,8 @@ class Scraper(threading.Thread):
 
     # Thread run loop
     def run(self):
-        time.sleep(1)
         while not self.stop_event.is_set():
+            time.sleep(5)
             if not self.queue.empty():
                 self.execute_scrape()
                 # Signals to queue that task was finished
