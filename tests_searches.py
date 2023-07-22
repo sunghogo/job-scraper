@@ -20,6 +20,8 @@ class TestScraperMethods(unittest.TestCase):
            search_location="United States", experience_level="ENTRY_LEVEL")
         self.scraper.add_scrape(search_position="Software Developer Junior",
            search_location="United States", experience_level="ENTRY_LEVEL")
+        self.scraper.add_scrape(search_position="Software Engineer Internship",
+           search_location="United States", experience_level="ENTRY_LEVEL")
         self.scraper.queue.join()
         self.assertTrue(self.scraper.queue.empty())
             
