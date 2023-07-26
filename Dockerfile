@@ -37,4 +37,4 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.11.0/wai
 RUN chmod +x /wait
 
 # Run app
-CMD /wait && python app.py
+CMD /wait && pytest tests_searches.py
