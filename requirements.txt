@@ -1,9 +1,9 @@
 Flask==2.3.2
 Flask-SQLAlchemy==3.0.5
 psycopg2-binary==2.9.6
-requests==2.31.0
 beautifulsoup4==4.12.2
 python-dotenv==1.0.0
+pytest==7.4.0
 selenium==4.10.0
 chromedriver-binary==114.0.5735.90.0
-pytest==7.4.0
+git+https://www.github.com/ultrafunkamsterdam/undetected-chromedriver@3.5.0
