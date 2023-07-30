@@ -58,4 +58,4 @@ RUN chmod +x /wait
 
 # Run app
 CMD /wait && pytest tests_searches.py
-# CMD python test.py
+# CMD python test_uc.py
