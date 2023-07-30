@@ -3,7 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
 from typing import Dict, List
-from datetime import datetime
+from datetime import datetime, timedelta
+import re
 import time
 import random
 from scraper.fetch import fetch_indeed
@@ -89,6 +90,13 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         position = job.find('h2', class_='jobTitle').get_text()
         company = job.find('span', class_='companyName').get_text()
         location = job.find('div', class_='companyLocation').get_text()
+        date = job.find('span', class_='date').get_text()
+        if 'ago' in date:
+            days_ago = int(re.find(r'\d+', date))
+            date_posted = datetime.now().strftime('%Y-%m-%d')
+            date_posted -= timedelta(days_ago)
+        else:
+            date_posted = datetime.now().strftime('%Y-%m-%d')
 
         # Extract text content for metadata bubble
         salary = job.find('div', class_='salary-snippet-container')
@@ -118,7 +126,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         # Form json dictionary containing extracted job information
         job_dict = {
             'job_id': job_id,
-            "date_posted": datetime.now().strftime('%Y-%m-%d'),
+            "date_posted": date_posted,
             'position': position,
             'company': company,
             'location': location,
