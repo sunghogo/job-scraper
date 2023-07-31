@@ -1,10 +1,9 @@
+import undetected_chromedriver as uc
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import chromedriver_binary
-
 
 # Initializes Selenium chromium browser and settings
-def init_webdriver():
+def init_webdriver() -> webdriver:
     # Setup selenium chrome options
     chrome_options = Options()
     chrome_options.add_argument('--headless')
@@ -18,10 +17,6 @@ def init_webdriver():
     chrome_options.set_capability('goog:loggingPrefs', {'browser': 'WARNING'})
 
     # Initialize webdriver
-    driver = webdriver.Chrome(options=chrome_options)
-    driver.execute_cdp_cmd('Network.setUserAgentOverride', {
-                           "userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.53 Safari/537.36'})
-    driver.execute_script(
-        "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-
+    driver = uc.Chrome(headless=True,use_subprocess=False,version_main=104,options=chrome_options)
+    
     return driver
