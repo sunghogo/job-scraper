@@ -23,7 +23,7 @@ class TestScraper(unittest.TestCase):
 
     # Test whether adding/executing scrape calls to/from the queue works
     def test_add_execute_scrape(self):
-        self.scraper.add_scrape(search_position="Software Engineer",
+        self.scraper.add_scrape(search_position="Frontend",
            search_location="New York", experience_level="ENTRY_LEVEL")
         self.assertFalse(self.scraper.queue.empty())
         self.scraper.execute_scrape()
@@ -32,7 +32,7 @@ class TestScraper(unittest.TestCase):
     
     # Test whether adding a scrape call to the queue automatically executes it through the run loop
     def test_scraper_loop(self):
-        self.scraper.add_scrape(search_position="Software Engineer",
+        self.scraper.add_scrape(search_position="Frontend",
            search_location="Austin, TX", experience_level="ENTRY_LEVEL")
         self.scraper.queue.join()
         self.assertTrue(self.scraper.queue.empty())
