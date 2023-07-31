@@ -12,32 +12,19 @@
 # Select Python distribtion
 FROM python:3.9
 
-# Update system
-RUN apt-get update && apt-get upgrade -y
-# This breaks the bind mount for some reason: Error calling wrapper: Message: unknown error: cannot find Chrome binary
-# RUN apt-get update \
-#     && apt-get upgrade -y \
-#     && apt-get install -y wget unzip ca-certificates libnss3 libnss3-tools libnspr4 \
-#     && rm -rf /var/lib/apt/lists/
+# Update system and install dependencies
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y wget unzip ca-certificates libnss3 libnss3-tools libnspr4
 
-# Install wget
-RUN apt-get install -y wget
+# Download and install older version of chrome (v104) from slimjet
+ENV DEB_PACKAGE="google-chrome-stable_current_amd64.deb"
 
-# Download and install chrome
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
-
-# # Set Chromium version
-# ENV CHROMIUM_VERSION=1058929
-
-# # Download and extract Chromium v108
-# RUN wget -q "https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/${CHROMIUM_VERSION}/chrome-linux.zip" -O /tmp/chromium.zip \
-#     && mkdir -p /opt/chromium \
-#     && unzip /tmp/chromium.zip -d /opt/chromium \
-#     && rm /tmp/chromium.zip
-
-# # Set path to include Chromium
-# ENV PATH="/opt/chromium/chrome-linux:${PATH}"
+RUN wget -q "https://www.slimjet.com/chrome/download-chrome.php?file=files%2F104.0.5112.102%2F${DEB_PACKAGE}" -O "/tmp/${DEB_PACKAGE}" && \
+    dpkg -i "/tmp/${DEB_PACKAGE}" || true && \
+    apt-get install -f -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm "/tmp/${DEB_PACKAGE}"
 
 # Set home/working directory to app
 ENV HOME /app
@@ -57,5 +44,5 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.11.0/wai
 RUN chmod +x /wait
 
 # Run app
-CMD /wait && pytest tests_searches.py
-# CMD python test_uc.py
+# CMD /wait && pytest tests_searches.py
+CMD python test_uc.py
