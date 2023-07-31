@@ -9,16 +9,25 @@ from selenium.common.exceptions import WebDriverException
 
 class TestWebdriver(unittest.TestCase):
     # Initialize webdriver
-    driver = None
-    
-    def test_init_webdriver(self):
+    def setUp(self):
         self.driver = init_webdriver()
+
+    def test_init_webdriver(self):
         self.assertIsInstance(self.driver, WebDriver)
-        
+
     def test_webdriver_close(self):
         with self.assertRaises(WebDriverException):
             self.driver.quit()
             self.driver.get('http://127.0.0.1')
+
+    # Shutdown webdriver
+    def tearDown(self):
+        if self.driver:
+            try:
+                self.driver.quit()
+            except WebDriverException: # Catch test_web_driver_close() exception
+                pass
+
         
 if __name__ == '__main__':
     unittest.main()
