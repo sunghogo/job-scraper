@@ -1,9 +1,9 @@
 import undetected_chromedriver as uc
-from selenium import webdriver
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.chrome.options import Options
 
 # Initializes Selenium chromium browser and settings
-def init_webdriver() -> webdriver:
+def init_webdriver() -> WebDriver:
     # Setup selenium chrome options
     chrome_options = Options()
     chrome_options.add_argument('--headless')
