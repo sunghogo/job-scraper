@@ -8,10 +8,11 @@ import time
 
 class TestScraperMethods(unittest.TestCase):
     # Initialize Scraper module
-    scraper = Scraper()
+    scraper = None
     
     # Test whether scraper module was properly initialiszed
     def test_scraper_init(self):
+        scraper = Scraper()
         self.assertIsInstance(self.scraper, Scraper)
         self.assertTrue(self.scraper.queue.empty())
         
