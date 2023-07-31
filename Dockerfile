@@ -34,7 +34,7 @@ WORKDIR /app
 COPY . .
 
 # Install python dependencies
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Expose container port 5000 for local access
 EXPOSE 5000
@@ -43,6 +43,8 @@ EXPOSE 5000
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.11.0/wait /wait
 RUN chmod +x /wait
 
+# Add root project directory into python paths so that subdirectories can find each other
+ENV PYTHONPATH="${PYTHONPATH}:/app"
+
 # Run app
-# CMD /wait && pytest tests_searches.py
-CMD python test_uc.py
+CMD /wait && pytest tests/
