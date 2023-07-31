@@ -4,7 +4,7 @@ import time
 from scraper.scrape_indeed import scrape_indeed
 from util.webdriver_init import init_webdriver
 from handlers.exceptions_handlers import logging_exceptions_handler
-from handlers.logs_handlers import log_scraper_queue_handler
+from handlers.logs_handlers import log_scraper_queue_handler, log_webdriver_handler
 
 # Scraper module that continuously runs on a thread, and executes scrapes in its queue
 class Scraper(threading.Thread):
@@ -46,6 +46,8 @@ class Scraper(threading.Thread):
 
 
 # Scrapes search on job boards
+@log_webdriver_handler
+@logging_exceptions_handler
 def scrape(search_position: str, search_location: str, experience_level: str = "ALL"):
     # Initialize webdriver instance
     driver = init_webdriver()

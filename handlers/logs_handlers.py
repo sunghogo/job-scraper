@@ -45,6 +45,17 @@ def log_scraper_queue_handler(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            append_log(data=f"Error calling {func.__name__}: {str(e)}",
+            append_log(data=f"Error in scraper queue calling {func.__name__}: {str(e)}",
+                        log_type='error', filename=error_log_filename)
+    return wrapper
+
+
+# Decorator that handles logging webdriver initialize error log files
+def log_webdriver_handler(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            append_log(data=f"Error in webdriver calling {func.__name__}: {str(e)}",
                         log_type='error', filename=error_log_filename)
     return wrapper
