@@ -1,18 +1,17 @@
 # Command to run test:
-# pytest tests_scraper.py
+# pytest tests/ OR pytest tests/tests_scraper.py
 
 import unittest
 import pytest
 from scraper.scraper import Scraper
-import time
 
-class TestScraperMethods(unittest.TestCase):
+class TestScraper(unittest.TestCase):
     # Initialize Scraper module
     scraper = None
     
     # Test whether scraper module was properly initialiszed
     def test_scraper_init(self):
-        scraper = Scraper()
+        self.scraper = Scraper()
         self.assertIsInstance(self.scraper, Scraper)
         self.assertTrue(self.scraper.queue.empty())
         

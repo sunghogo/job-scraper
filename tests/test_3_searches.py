@@ -1,21 +1,20 @@
 # Command to run test:
-# pytest tests_searches.py
+# pytest tests/ OR pytest tests/tests_searches.py
 
 import unittest
 import pytest
 from scraper.scraper import Scraper
-import time
 
-class TestScraperMethods(unittest.TestCase):
+class TestSearches(unittest.TestCase):
     # Initialize Scraper module
     scraper = Scraper()
     
     # Test multiple searches
     def test_scraper_loop(self):
       self.scraper.add_scrape(search_position="Software Engineer",
-   search_location="New York", experience_level="ENTRY_LEVEL")
+         search_location="New York", experience_level="ENTRY_LEVEL")
       self.scraper.add_scrape(search_position="Software Engineer",
-search_location="Austin, TX", experience_level="ENTRY_LEVEL")
+         search_location="Austin, TX", experience_level="ENTRY_LEVEL")
       self.scraper.add_scrape(search_position="Software Engineer Entry",
          search_location="United States", experience_level="ENTRY_LEVEL")
       self.scraper.add_scrape(search_position="Software Engineer Junior",
