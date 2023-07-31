@@ -7,13 +7,24 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 def driver_init_chrome():
-    driver = uc.Chrome(headless=True,use_subprocess=False)
+    # Setup selenium chrome options
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--disable-extensions')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--window-size=1920,1080')
+    options.add_argument('--disable-dev-shm-usage')
+    # Setting logging level for browser to 'WARNING' and above
+    options.add_argument("--log-level=3")
+    options.set_capability('goog:loggingPrefs', {'browser': 'WARNING'})
+    driver = uc.Chrome(headless=True,use_subprocess=False,version_main=104,options=options)
     return driver
 
 def driver_init_chromium():
     options = uc.ChromeOptions()
     options.binary_location = '/opt/chromium/chrome-linux/chrome'
-    driver = uc.Chrome(headless=True,use_subprocess=False,options=options)
+    driver = uc.Chrome(headless=True,use_subprocess=False,options=options,version_main=106)
     return driver
 
 def driver_init_selenium():
@@ -32,11 +43,10 @@ try:
     try:
         driver.get('https://nowsecure.nl')
         time.sleep(5)
-        screenshot(driver, 'nowsecure.png')
+        screenshot(driver, 'nowsecure')
         driver.get('https://www.indeed.com')
         time.sleep(5)
-        driver.save_screenshot('indeed.png')
-        screenshot(driver, 'indeed.png')
+        screenshot(driver, 'indeed')
         append_log(data="It worked", log_type='error', filename='sneed')
         driver.quit()
     except Exception as e:
