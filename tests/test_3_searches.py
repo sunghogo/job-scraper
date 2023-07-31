@@ -7,9 +7,10 @@ from scraper.scraper import Scraper
 
 class TestSearches(unittest.TestCase):
     # Initialize Scraper module
-    scraper = Scraper()
+    def setUp(self):
+      self.scraper = Scraper()
     
-    # Test multiple searches
+    # Test multiple searches in a queue
     def test_scraper_loop(self):
       self.scraper.add_scrape(search_position="Software Engineer",
          search_location="New York", experience_level="ENTRY_LEVEL")
@@ -23,6 +24,11 @@ class TestSearches(unittest.TestCase):
          search_location="United States", experience_level="ENTRY_LEVEL")
       self.scraper.queue.join()
       self.assertTrue(self.scraper.queue.empty())
+      
+   # Shutdown Scraper module
+    def tearDown(self):
+        if self.scraper:
+            self.scraper.stop()
             
 
 if __name__ == '__main__':
