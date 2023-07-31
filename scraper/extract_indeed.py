@@ -63,12 +63,11 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
     parsed_page_html = BeautifulSoup(extracted_page_html, 'html.parser')
 
     # Find both source and parsed job listing elements
-    jobs = parsed_page_html.find_all('table', class_='job_seen_beacon')
+    jobs = parsed_page_html.find_all('div', class_='job_seen_beacon')
     jobs_els = driver.find_elements(By.CLASS_NAME, "job_seen_beacon")
 
     # Extract data from each job listing on page
     for i, job in enumerate(jobs):
-
         # Get job id
         job_id = job.find('a').get('data-jk', None)
         job_link = job.find('a').get('href', None)
@@ -91,13 +90,10 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         company = job.find('span', class_='companyName').get_text()
         location = job.find('div', class_='companyLocation').get_text()
         date = job.find('span', class_='date').find('span').get_text()
+        date_posted = datetime.now().strftime('%Y-%m-%d')
         if 'ago' in date:
             days_ago = int(re.find(r'\d+', date))
-            date_posted = datetime.now().strftime('%Y-%m-%d')
             date_posted -= timedelta(days_ago)
-        else:
-            date_posted = datetime.now().strftime('%Y-%m-%d')
-        date_posted = datetime.now().strftime('%Y-%m-%d')
 
         # Extract text content for metadata bubble
         salary = job.find('div', class_='salary-snippet-container')
