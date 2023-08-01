@@ -37,13 +37,13 @@ def extract_indeed_pages(driver: WebDriver, search_position: str, search_locatio
         list_page_jobs_data = extract_indeed_page(driver=driver)
         list_jobs_data = list_jobs_data + list_page_jobs_data
 
-        #  Write/appends page results to output json data file
+        #  Write/overwrite page results to output json data file
         json_filepath = write_json_data(
             data=list_jobs_data, filename=f"indeed_{search_position.lower().replace(' ', '_')}_{search_location.lower().replace(' ', '_')}", filepath=json_filepath)
 
-        # Sleep 20 seconds between page fetches
+        # Sleep 10 seconds between page fetches
         if page != total_page_num:
-            time.sleep(15 + random.random())
+            time.sleep(10 + random.random())
 
         # If there are no next page url due to indeed cutting off search results, end search early
         if parsed_page_html.find('a', {'data-testid': 'pagination-page-next'}) is None:
