@@ -114,22 +114,18 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         if easy_apply_button is not None:
             easy_apply = 'yes'
 
-        # Extract license details section
-        licenses = None
-        job_insights =  job_right_panel.find('div', {"id": "mosaic-aboveExtractedJobDescription"})
-        if job_insights is not None:
-            license_list = job_insights.find('ul', class_='resumeMatch-TileContext-interactive-list')
-            if license_list is not None:
-                li_list = [li.get_text() for li in license_list.findall('li', class_='resumeMatch-TileContext-listItem')]
-                licenses = ', '.join(li_list)
+        # Extract profile insights section
+        # CANNOT extract profile insights unless logged in
+        # job_insights =  job_right_panel.find('div', {"id": "mosaic-aboveExtractedJobDescription"})
+        # if job_insights is not None:
+        #     job_insights = job_insights.get_text(
+        #         separator='\n', strip=True)
         
         # Extract righthand job details section
-        job_type = None
         job_details = job_right_panel.find('div', {"id": "jobDetailsSection"})
         if job_details is not None:
-            # job_details = job_details.get_text(
-            #     separator='\n', strip=True)
-            job_type = job_details.find('div', class_='css-l12mza eu4oa1w0').get_text()
+            job_details = job_details.get_text(
+                separator='\n', strip=True)
 
         # Extract righthand job description
         job_description = job_right_panel.find(
@@ -147,10 +143,9 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             'location': location,
             'salary': salary,
             'estimated_salary': estimated_salary,
-            'licenses': licenses,
             'easy_apply': easy_apply,
-            'job_type': job_type,
-            # 'detail': job_details,
+            # 'insights': job_insights,
+            'detail': job_details,
             'description': job_description,
             'link': f"https://www.indeed.com{job_link}",
         }
