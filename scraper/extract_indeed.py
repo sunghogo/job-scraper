@@ -107,6 +107,17 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         reextracted_html = driver.page_source
         reparsed_html = BeautifulSoup(reextracted_html, 'html.parser')
 
+        # class="jobsearch-IndeedApplyButton-buttonWrapper is-embedded"
+
+        # Extract license details section
+        job_insights =  reparsed_html.find('div', {"id": "mosaic-aboveExtractedJobDescription"})
+        licenses = ''
+        if job_insights is not None:
+            license_list = job_insights.find('ul', class_='resumeMatch-TileContext-interactive-list')
+            if license_list is not None:
+                li_list = [li.get_text() for li in license_list.findall('li', class_='resumeMatch-TileContext-listItem')]
+                licenses = ', '.join(li_list)
+        
         # Extract righthand job details section
         job_details = reparsed_html.find('div', {"id": "jobDetailsSection"})
         if job_details is not None:
@@ -129,6 +140,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             'location': location,
             'salary': salary,
             'estimated_salary': estimated_salary,
+            'licenses': licenses,
             'detail': job_details,
             'description': job_description,
             'link': f"https://www.indeed.com{job_link}",
