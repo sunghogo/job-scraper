@@ -124,10 +124,12 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
                 licenses = ', '.join(li_list)
         
         # Extract righthand job details section
+        job_type = None
         job_details = job_right_panel.find('div', {"id": "jobDetailsSection"})
         if job_details is not None:
-            job_details = job_details.get_text(
-                separator='\n', strip=True)
+            # job_details = job_details.get_text(
+            #     separator='\n', strip=True)
+            job_type = job_details.find('div', class_='css-l12mza eu4oa1w0').get_text()
 
         # Extract righthand job description
         job_description = job_right_panel.find(
@@ -147,7 +149,8 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             'estimated_salary': estimated_salary,
             'licenses': licenses,
             'easy_apply': easy_apply,
-            'detail': job_details,
+            'job_type': job_type,
+            # 'detail': job_details,
             'description': job_description,
             'link': f"https://www.indeed.com{job_link}",
         }
