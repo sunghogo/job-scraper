@@ -82,8 +82,8 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         except TimeoutException:
             return
 
-        # Sleep 1 seconds between job detail clicks wait
-        time.sleep(1.5 + random.random() + random.random())
+        # Sleep 1.5-4.5 seconds between job detail clicks wait
+        time.sleep(1.5 + random.random() + random.random()*2)
 
         # Extract text content of interest from lefthand job summary cards
         position = job.find('h2', class_='jobTitle').get_text()
