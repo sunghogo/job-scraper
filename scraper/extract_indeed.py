@@ -110,8 +110,8 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         # class="jobsearch-IndeedApplyButton-buttonWrapper is-embedded"
 
         # Extract license details section
+        licenses = None
         job_insights =  reparsed_html.find('div', {"id": "mosaic-aboveExtractedJobDescription"})
-        licenses = ''
         if job_insights is not None:
             license_list = job_insights.find('ul', class_='resumeMatch-TileContext-interactive-list')
             if license_list is not None:
