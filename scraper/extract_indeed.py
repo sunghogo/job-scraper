@@ -108,7 +108,11 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         reparsed_html = BeautifulSoup(reextracted_html, 'html.parser')
         job_right_panel = reparsed_html.find('div', class_='jobsearch-RightPane')
 
-        # class="jobsearch-IndeedApplyButton-buttonWrapper is-embedded"
+        # Extracts if the listing is easy apply
+        easy_apply = 'no'
+        easy_apply_button = job_right_panel.find('div', class_='jobsearch-IndeedApplyButton-buttonWrapper is-embedded')
+        if easy_apply_button is not None:
+            easy_apply = 'yes'
 
         # Extract license details section
         licenses = None
@@ -142,6 +146,7 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
             'salary': salary,
             'estimated_salary': estimated_salary,
             'licenses': licenses,
+            'easy_apply': easy_apply,
             'detail': job_details,
             'description': job_description,
             'link': f"https://www.indeed.com{job_link}",
