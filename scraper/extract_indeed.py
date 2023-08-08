@@ -106,12 +106,13 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
         # Re-extract and parse html after righthand job details body description loads
         reextracted_html = driver.page_source
         reparsed_html = BeautifulSoup(reextracted_html, 'html.parser')
+        job_right_panel = reparsed_html.find('div', class_='jobsearch-RightPane')
 
         # class="jobsearch-IndeedApplyButton-buttonWrapper is-embedded"
 
         # Extract license details section
         licenses = None
-        job_insights =  reparsed_html.find('div', {"id": "mosaic-aboveExtractedJobDescription"})
+        job_insights =  job_right_panel.find('div', {"id": "mosaic-aboveExtractedJobDescription"})
         if job_insights is not None:
             license_list = job_insights.find('ul', class_='resumeMatch-TileContext-interactive-list')
             if license_list is not None:
@@ -119,13 +120,13 @@ def extract_indeed_page(driver: WebDriver) -> List[Dict[str, str]]:
                 licenses = ', '.join(li_list)
         
         # Extract righthand job details section
-        job_details = reparsed_html.find('div', {"id": "jobDetailsSection"})
+        job_details = job_right_panel.find('div', {"id": "jobDetailsSection"})
         if job_details is not None:
             job_details = job_details.get_text(
                 separator='\n', strip=True)
 
         # Extract righthand job description
-        job_description = reparsed_html.find(
+        job_description = job_right_panel.find(
             'div', {"id": "jobDescriptionText"})
         if job_description is not None:
             job_description = job_description.get_text(
