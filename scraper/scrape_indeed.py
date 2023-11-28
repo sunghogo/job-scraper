@@ -8,7 +8,10 @@ from handlers.logs_handlers import log_scrapes_handler
 from scraper.construct_url import construct_indeed_url
 from scraper.extract_indeed import extract_indeed_pages
 
-job_board = "Indeed"
+job_board = 'Indeed'
+
+# Initialize html class/id names
+job_count_div_class_name = 'jobsearch-JobCountAndSortPane-jobCount'
 
 
 # Scrapes indeed with the specified job search query terms nad options
@@ -31,7 +34,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
 
     # Extract number of listed jobs, and calculate number of pages
     job_count = parsed_html.find(
-        'div', class_='jobsearch-JobCountAndSortPane-jobCount').get_text().split(' ')[0]
+        'div', class_= job_count_div_class_name).get_text().split(' ')[0]
     total_page_num = math.ceil(int(job_count) / 15)
 
     # Extracts job listings data on each page, and then writes/appends them to output json file
