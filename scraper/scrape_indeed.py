@@ -26,7 +26,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
         search_position, search_location, search_options)
 
     # Fetch intial indeed url
-    fetch_indeed(driver=driver, url=initial_url, initial_fetch=True)
+    fetch_indeed(driver=driver, url=initial_url)
 
     # Fetch initial HTML and parsed soup
     extracted_html = driver.page_source
