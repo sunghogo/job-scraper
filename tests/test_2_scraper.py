@@ -3,7 +3,7 @@
 
 import unittest
 import pytest
-from scraper.scraper import Scraper
+from scraper.Scraper import Scraper
 
 # Since debugger keeps track of inactive threads, cannot determine whether thread closes properly through .stop() or .join(), and threading.active_count()
 class TestScraper(unittest.TestCase):

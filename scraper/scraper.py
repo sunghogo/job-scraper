@@ -1,4 +1,4 @@
-import threading
+from threading import Thread
 from queue import Queue
 import time
 from scraper.scrape_indeed import scrape_indeed
@@ -6,30 +6,57 @@ from util.webdriver_init import init_webdriver
 from handlers.exceptions_handlers import logging_exceptions_handler
 from handlers.logs_handlers import log_scraper_queue_handler, log_webdriver_handler
 
-# Scraper module that continuously runs on a thread, and executes scrapes in its queue
+
 class Scraper(threading.Thread):
-    # Initialize Thread superclass, queue, events, and starts upon initialization
+    """
+    Scraper class that continuously runs on a thread, and executes ScrapeTasks in its queue.
+
+    Args:
+        threading.Thread: Thread superclass to run the Scraper object
+    """
+    
     def __init__(self):
+        """
+        Initializes and runs Scraper object.
+        
+        Upon initialization, Scraper object will initialize and start superclass Thread object, queue, and flags.
+        """
+        
         super().__init__()
         self.queue = Queue()
-        # This ensures the thread will exit when the main program exits
-        self.daemon = True
-        # Create flag that stops the thread when set
-        self.stop_event = threading.Event()
-        self.start()
+        self.daemon = True # This ensures the thread will exit when the main program exits
+        self.stop_event = threading.Event() # Creates Thread flag that stops the thread when set
+        self.pause = False
+        self.start() # Starts superclass thread object
     
-    # Stops thread. This method will lead the thread to PERMANENTLY FINISH EXECUTING, and can only be restarted with a NEW INSTANCE of the class
+    
     def stop(self):
+        """
+        Stops Scraper object.
+        
+        This method will PERMANENTLY stop the super Thread object and can only be restarted with a NEW INSTANCE.
+        """
+        
         self.stop_event.set()
 
-    # Thread run loop
+
+    def pause(self):
+        
+        
+        
     def run(self):
+        """
+        Starts Scraper object.
+        
+        Forever loops and executes scrapes every 3 seconds until the object is stopped.
+        """
+        
         while not self.stop_event.is_set():
             time.sleep(3)
             if not self.queue.empty():
                 self.execute_scrape()
-                # Signals to queue that task was finished
-                self.queue.task_done()
+                self.queue.task_done()  # Signals to queue that task was finished
+
 
     # Add scrape call to the queue
     @log_scraper_queue_handler
