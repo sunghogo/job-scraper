@@ -7,6 +7,7 @@ from handlers.exceptions_handlers import logging_exceptions_handler, timeout_exc
 from handlers.logs_handlers import log_scrapes_handler
 from scraper.construct_url import construct_indeed_url
 from scraper.extract_indeed import extract_indeed_pages
+from util.util import append_log
 
 job_board = 'Indeed'
 
@@ -31,6 +32,9 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     # Fetch initial HTML and parsed soup
     extracted_html = driver.page_source
     parsed_html = BeautifulSoup(extracted_html, 'html.parser')
+    
+    #DEVONLY
+    # append_log(str(parsed_html), "log", f"{search_position} in {search_location}")
 
     # Extract number of listed jobs, and calculate number of pages
     job_count = parsed_html.find(
