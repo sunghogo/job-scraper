@@ -4,7 +4,8 @@ base_indeed_url = 'https://www.indeed.com'
 
 
 def construct_indeed_url(search_position: str, search_location: str, search_options: Dict[str, str] = None) -> str:
-    """Constructs indeed search url using the given search strings and options
+    """
+    Constructs indeed search url using the given search strings and options
 
     Args:
         search_position (str): REQUIRED Job Position Title
