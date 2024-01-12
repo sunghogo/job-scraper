@@ -10,7 +10,7 @@ import random
 from scraper.fetch import fetch_indeed
 from util.util import write_json_data
 from util.webdriver_util import wait_class
-from scraper.construct_url import construct_indeed_url
+from scraper.url import construct_indeed_url
 
 # Initialize html attribute/class/id names
 jobs_summary_container_id_attribute = 'data-testid'

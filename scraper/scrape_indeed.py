@@ -5,7 +5,7 @@ import math
 from scraper.fetch import fetch_indeed
 from handlers.exceptions_handlers import logging_exceptions_handler, timeout_exceptions_handler, screenshot_exceptions_handler, no_results_exceptions_handler
 from handlers.logs_handlers import log_scrapes_handler
-from scraper.construct_url import construct_indeed_url
+from scraper.url import construct_indeed_url
 from scraper.extract_indeed import extract_indeed_pages
 from util.util import append_log
 
@@ -34,7 +34,7 @@ def scrape_indeed(driver: WebDriver, search_position: str, search_location: str,
     parsed_html = BeautifulSoup(extracted_html, 'html.parser')
     
     #DEVONLY
-    # append_log(str(parsed_html), "log", f"{search_position} in {search_location}")
+    append_log(str(parsed_html), "log", f"{search_position} in {search_location}")
 
     # Extract number of listed jobs, and calculate number of pages
     job_count = parsed_html.find(
